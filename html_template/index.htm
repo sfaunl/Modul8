@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Modulator Demo</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favm/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favm/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favm/favicon-16x16.png">
+    <link rel="manifest" href="/assets/images/favm/site.webmanifest">
+    <link rel="mask-icon" href="/assets/images/favm/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="theme-color" content="#ffffff">
+
+    <style>
+        .wasm{
+            width:auto;
+            height:calc(100% - 10em);
+            margin: 0px auto;
+            top:6em;
+            left:0;
+            right:0;
+            border: 1px solid #555;
+            border-radius: 20px;
+            position:fixed;
+            overflow:hidden;
+            display:block;
+        }
+        .loader{
+            display: flex;
+            position:fixed;
+            max-width: 20em;
+            min-width: 10em;
+            height:10em;
+            margin: 0px auto;
+            top:10em;
+            left: 1em;
+            right: 1em;
+            border: 1px solid #555;
+            border-radius: 20px;
+            overflow:hidden;
+            background-color: #777;
+            z-index: 10;  
+        }
+        .spinner{
+            display: flex;
+            position: relative;
+            align-items: center;
+            margin: 0 auto;
+        }
+        .emscripten{
+            display: flex;
+            position: relative;
+            align-items: center;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <section id="home">
+            <div class="canvascontainer"> 
+                <canvas class="wasm" id="canvas"  style="background:#555" oncontextmenu="event.preventDefault()" tabindex=-1>
+                </canvas>
+                <div class="loader" id='loader'> 
+                    <div class="spinner" id='spinner'></div>
+                    <div class="emscripten" id="status">Downloading...</div>
+                    <div class="emscripten">
+                    <progress value="0" max="100" id="progress"></progress>
+                    </div>
+                </div>
+            </div>
+            <input id="picker" onchange="Module.emsc_js_onload()" style="display:none" type="file">
+        </section>
+    </main>
+    <script>
+        var loaderElement = document.getElementById('loader');
+        var statusElement = document.getElementById('status');
+        var progressElement = document.getElementById('progress');
+        var spinnerElement = document.getElementById('spinner');
+        var canvasElement = document.getElementById("canvas");
+        var Module={
+            preRun:[],
+            postRun:[],
+            canvas: (function() {
+            // As a default initial behavior, pop up an alert when webgl context is lost. To make your
+            // application robust, you may want to override this behavior before shipping!
+            // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
+            canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+            return canvas;
+            })(),
+            setStatus: function(text) {
+                if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
+                if (text === Module.setStatus.last.text) return;
+                var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+                var now = Date.now();
+                if (m && now - Module.setStatus.last.time < 30) return;
+                Module.setStatus.last.time = now;
+                Module.setStatus.last.text = text;
+                if (m) {
+                    text = m[1];
+                    progressElement.value = parseInt(m[2])*100;
+                    progressElement.max = parseInt(m[4])*100;
+                    progressElement.hidden = false;
+                    spinnerElement.hidden = false;
+                    loaderElement.opacity = 1;
+                } else {
+                    progressElement.value = null;
+                    progressElement.max = null;
+                    progressElement.hidden = true;
+                    if (!text) {
+                        spinnerElement.style.display = 'none';
+                        loaderElement.style.display = 'none';
+                    }
+                }
+                statusElement.innerHTML = text;
+            },
+            totalDependencies: 0,
+            monitorRunDependencies: function(left) {
+            this.totalDependencies = Math.max(this.totalDependencies, left);
+            Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+            },
+            monitorRunDependencies:function(e){},
+            print:function(e){e=Array.prototype.slice.call(arguments).join(" "),console.log(e)},
+            printErr:function(e){e=Array.prototype.slice.call(arguments).join(" "),console.error(e)}
+        };
+        window.onerror=function(e){
+        console.log("onerror: "+e.message)
+    }
+    </script>
+    <script async="" src="modulator.js?id=1"></script>
+</body>
+</html>
