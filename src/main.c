@@ -53,9 +53,13 @@ int main(int argc, char *argv[])
     (void)argv;
     signal(SIGINT, intHandler);
 
+    mod_demo();
+    // exit(0);
+
     app = app_init();
     if (!app) return 1;
 
+    app->mod = modulator_init();
     init_gui();
 
     Scheduler *scheduler = scheduler_open(get_time);
