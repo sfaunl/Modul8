@@ -3,7 +3,13 @@
 
 #include "imgui_renderer.h"
 
-Imgui *gui_init();
+typedef struct{
+    Imgui   *imgui;
+    bool    show_demo_window;
+    bool    show_about_window;
+} Gui;
+
+Gui *gui_init();
 int gui_run(void *userArg);
 
 #endif // _GUI_H

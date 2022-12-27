@@ -8,7 +8,8 @@ EXE = modulator_imgui
 IMGUI_DIR = src/ui/imgui
 SRC = src/main.cpp \
 src/app.cpp \
-src/ui/gui.cpp
+src/ui/gui.cpp \
+src/ui/gui_modulator.cpp
 SRC += $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_demo.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
 SRC += $(IMGUI_DIR)/backends/imgui_impl_sdl.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
 OBJS = $(addsuffix .o, $(basename $(notdir $(SOURCES))))

@@ -3,11 +3,11 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "ui/imgui_renderer.h"
+#include "ui/gui.h"
 
 typedef struct{
     bool    keepRunning;
-    Imgui   *imgui;
+    Gui     *gui;
 } App;
 
 App* app_init();

@@ -5,7 +5,7 @@
 int main(int, char**)
 {
     App *app = app_init();
-    app->imgui = gui_init();
+    app->gui = gui_init();
 
     // Main loop
     while (app->keepRunning)
