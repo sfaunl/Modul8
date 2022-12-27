@@ -4,18 +4,19 @@ BUILD_PRE_W = build/wasm
 BUILD_PRE_X = build/x86
 TEMPLATE_PRE = html_template
 
-EXE = modulator_imgui
+EXE = modulator
 IMGUI_DIR = src/ui/imgui
 SRC = src/main.cpp \
 src/app.cpp \
 src/ui/gui.cpp \
-src/ui/gui_modulator.cpp
+src/ui/gui_modulator.cpp \
+src/modulator/modulator.cpp
 SRC += $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_demo.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
 SRC += $(IMGUI_DIR)/backends/imgui_impl_sdl.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
 OBJS = $(addsuffix .o, $(basename $(notdir $(SOURCES))))
 
 LIBS += $(LINUX_GL_LIBS) -ldl `sdl2-config --libs`
-LIBS += -lm -lSDL2 -lGL -lGLU -lGLEW
+LIBS += -lm -lGL
 
 CXXFLAGS = -std=c++11 -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends
 CXXFLAGS += `sdl2-config --cflags`
@@ -34,17 +35,13 @@ x86_release:
 wasm:
 	mkdir -p $(BUILD_PRE_W)
 	cp $(TEMPLATE_PRE)/index.htm $(BUILD_PRE_W)/.
-	em++ $(SRC) \
-	$(CFLAGS) \
-	$(WASMDEFINES) \
-	$(LIBS) \
-	-Os \
+	em++ $(SRC) $(CFLAGS) $(WASMDEFINES) $(LIBS) -O3 \
 	-s WASM=1 \
 	-s USE_SDL=2 \
 	-s DISABLE_EXCEPTION_CATCHING=1 \
 	-s ALLOW_MEMORY_GROWTH=1 -s NO_EXIT_RUNTIME=0 -s ASSERTIONS=1 \
 	-s ASYNCIFY \
-	-o $(BUILD_PRE_W)/modulator.js
+	-o $(BUILD_PRE_W)/$(EXE).js
 
 clean:
 	rm -f $(BUILD_PRE_W)/*

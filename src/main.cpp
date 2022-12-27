@@ -4,12 +4,16 @@
 // Main code
 int main(int, char**)
 {
+    mod_demo();
+    
     App *app = app_init();
     app->gui = gui_init();
+    app->mod = modulator_init();
 
     // Main loop
     while (app->keepRunning)
     {
+        modulator_run(app);
         gui_run(app);
     }
 

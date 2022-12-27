@@ -36,6 +36,8 @@ Gui *gui_init()
     gui->imgui = imgui_renderer_init("Dear ImGui SDL2+OpenGL3 example", window_width, window_height);
     gui->show_demo_window = true;
     gui->show_about_window = false;
+
+    return gui;
 }
 
 void render_gui(App *app)
