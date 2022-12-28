@@ -23,7 +23,7 @@ LIBS += -lm -lGL
 
 CXXFLAGS = -std=c++11 -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends
 CXXFLAGS += `sdl2-config --cflags`
-CXXFLAGS += -g -Wall -Wextra -Wformat
+CXXFLAGS += -g -Wall -Wextra -Wformat -Wformat -pedantic
 CXXFLAGS += -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends
 CXXFLAGS += -I$(IMPLOT_DIR)
 CFLAGS = $(CXXFLAGS)

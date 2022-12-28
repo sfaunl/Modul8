@@ -37,7 +37,7 @@ void gui_modulator_main_window(App *app)
     }
     ImGui::End();
 
-    int N = 1000;//app->mod->dataLength;
+    static const int N = 100;//app->mod->dataLength;
     uint8_t x_data[N];
     for (int i=0; i<N; i++) x_data[i] = i;
     float x_datad[N];
