@@ -28,10 +28,11 @@ void gui_modulator_main_window(App *app)
 
     const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 10, main_viewport->WorkPos.y + 30), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(480, 115), ImGuiCond_FirstUseEver);
     ImGui::Begin("Modulation Demo");
     {
         ImGui::Combo("Modulation", (int*)&app->mod->modType, modTypeStr, IM_ARRAYSIZE(modTypeStr));
-        ImGui::SliderFloat("Noise SNR(dB)", &app->mod->noiseSNRdB, 0.0f, 50.0f);
+        ImGui::SliderFloat("SNR(dB)", &app->mod->noiseSNRdB, 0.0f, 50.0f);
         ImGui::Text("Bit Error Rate = %.6f%%", 100 * app->mod->bitErrorRate);
         ImGui::Text("Symbol Error Rate = %.6f%%", 100 * app->mod->symbolErrorRate);
     }
@@ -56,8 +57,8 @@ void gui_modulator_main_window(App *app)
         imag_array[i] = imag(app->mod->modData[i]);
     }
 
-    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 10, main_viewport->WorkPos.y + 150), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(480, 450), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 10, main_viewport->WorkPos.y + 160), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(480, 400), ImGuiCond_FirstUseEver);
     ImGui::Begin("Constellations");
     {
         if (ImPlot::BeginPlot("Constellations")) {
@@ -68,8 +69,8 @@ void gui_modulator_main_window(App *app)
     }
     ImGui::End();
 
-    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 590, main_viewport->WorkPos.y + 30), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(600, 700), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 500, main_viewport->WorkPos.y + 30), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(480, 680), ImGuiCond_FirstUseEver);
     ImGui::Begin("Data");
     {
         if (ImPlot::BeginPlot("Input bit stream")) {
