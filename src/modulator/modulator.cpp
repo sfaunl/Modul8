@@ -78,21 +78,20 @@ double calculate_ser(uint8_t *txBits, uint8_t *rxBits, int length, ModType modTy
 
 // modData: input
 // rxData : output
-void channel(cmplx *symbols, cmplx *rxData, int length, double snr_db)
+void channel(cmplx *symbols, cmplx *rxData, int length, float snr_db)
 {
-    double signalPower = calculate_signal_power(symbols, length);
+    float signalPower = calculate_signal_power(symbols, length);
 
-    double snr = pow(10, snr_db / 10.0); // snr linear
-    double noise_power = signalPower / snr;
+    float snr = pow(10, snr_db / 10.0); // snr linear
+    float noise_power = signalPower / snr;
 
     // generate random noise with normal dist
-    double *rand_n = (double*)malloc(length * sizeof(double));
-    statistics_dist_normal(rand_n, length, 0.0, 1.0);
-    
     cmplx *noise = (cmplx*)malloc(length * sizeof(cmplx));;
     for (int i=0; i<length; i++)
     {
-        noise[i] = sqrt(noise_power / 2) * cmplx(1, 1) * rand_n[i];
+        float noise_r = sqrt(noise_power / 2) * rand_normal(0.0, 1.0);
+        float noise_i = sqrt(noise_power / 2) * rand_normal(0.0, 1.0);
+        noise[i] = cmplx(noise_r, noise_i);
     }
 
     // add noise to data
@@ -100,7 +99,6 @@ void channel(cmplx *symbols, cmplx *rxData, int length, double snr_db)
     {
         rxData[i] = symbols[i] + noise[i];
     }
-    free(rand_n);
     free(noise);
 }
 
