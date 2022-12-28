@@ -38,9 +38,9 @@ void gui_modulator_main_window(App *app)
     ImGui::End();
 
     int N = 1000;//app->mod->dataLength;
-    uint8_t x_data[N] = {3};
+    uint8_t x_data[N];
     for (int i=0; i<N; i++) x_data[i] = i;
-    float x_datad[N] = {1, 0};
+    float x_datad[N];
     for (int i=0; i<N; i++) x_datad[i] = (float)i;
 
     float real_arrayrx[N];
