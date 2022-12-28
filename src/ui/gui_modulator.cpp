@@ -34,6 +34,20 @@ void gui_modulator_main_window(App *app)
         ImGui::End();
     }
 
+    {
+        int   bar_data[11] = {5};
+        float x_data[1000] = {1.25f};
+        float y_data[1000] = {3.5f};
+
+        ImGui::Begin("Plot Demo");
+            if (ImPlot::BeginPlot("My Plot")) {
+                ImPlot::PlotBars("My Bar Plot", bar_data, 11);
+                ImPlot::PlotLine("My Line Plot", x_data, y_data, 1000);
+                ImPlot::EndPlot();
+            }
+        ImGui::End();
+    }
+
     // 3. Show another simple window.
     if (gui->show_about_window)
     {

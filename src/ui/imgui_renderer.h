@@ -11,6 +11,9 @@
 #include <SDL_opengl.h>
 #endif
 
+#define IMPLOT_DISABLE_OBSOLETE_FUNCTIONS
+#include "implot.h"
+
 struct Imgui
 {
     SDL_Renderer    *renderer;

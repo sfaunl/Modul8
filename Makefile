@@ -6,6 +6,7 @@ TEMPLATE_PRE = html_template
 
 EXE = modulator
 IMGUI_DIR = src/ui/imgui
+IMPLOT_DIR = src/ui/implot
 SRC = src/main.cpp \
 src/app.cpp \
 src/ui/imgui_renderer.cpp \
@@ -14,6 +15,7 @@ src/ui/gui_modulator.cpp \
 src/modulator/modulator.cpp
 SRC += $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_demo.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
 SRC += $(IMGUI_DIR)/backends/imgui_impl_sdl.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
+SRC += $(IMPLOT_DIR)/implot.cpp $(IMPLOT_DIR)/implot_items.cpp
 OBJS = $(addsuffix .o, $(basename $(notdir $(SOURCES))))
 
 LIBS += $(LINUX_GL_LIBS) -ldl `sdl2-config --libs`
@@ -23,6 +25,7 @@ CXXFLAGS = -std=c++11 -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends
 CXXFLAGS += `sdl2-config --cflags`
 CXXFLAGS += -g -Wall -Wextra -Wformat
 CXXFLAGS += -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends
+CXXFLAGS += -I$(IMPLOT_DIR)
 CFLAGS = $(CXXFLAGS)
 
 x86_debug:

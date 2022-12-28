@@ -52,6 +52,7 @@ Imgui *imgui_renderer_init(const char * windowName, int windowWidth, int windowH
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
+    ImPlot::CreateContext();
     _imgui->imguiIO = &ImGui::GetIO(); (void)_imgui->imguiIO;
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
