@@ -33,8 +33,8 @@ Gui *gui_init()
     window_height = (window_height * 7) / 8;
 #endif
     Gui *gui = new Gui();
-    gui->imgui = imgui_renderer_init("Dear ImGui SDL2+OpenGL3 example", window_width, window_height);
-    gui->show_demo_window = true;
+    gui->imgui = imgui_renderer_init("Modulation Demo", window_width, window_height);
+    gui->show_demo_window = false;
     gui->show_about_window = false;
 
     return gui;
