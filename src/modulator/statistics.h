@@ -106,7 +106,7 @@ void statistics_dist_uniform(float *signal, int length, float min, float max)
 {
     for(int i = 0; i < length; i++)
     {
-        float randx = (float) rand() / RAND_MAX;
+        float randx = rand() / (float) RAND_MAX;
         signal[i] = SCALE_LINEAR(randx, 0.0, 1.0, min, max);
     }
 }
@@ -124,7 +124,7 @@ void statistics_dist_triangular(float *signal, int length, float lower, float pe
 {
     for(int i = 0; i < length; i++)
     {
-        float randx = (float) rand() / RAND_MAX;
+        float randx = rand() / (float) RAND_MAX;
         if (randx < (peak-lower) / (upper-lower))
         {
             signal[i] = lower + sqrt(randx * (upper - lower) * (peak - lower));
