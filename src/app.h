@@ -1,8 +1,6 @@
 #ifndef _APP_H
 #define _APP_H
 
-#include <stdint.h>
-#include <stdbool.h>
 #include "ui/gui.h"
 #include "modulator/modulator.h"
 

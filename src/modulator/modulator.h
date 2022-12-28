@@ -3,7 +3,6 @@
 #define MODULATOR_H_
 
 #include <complex>
-#include <stdint.h>
 
 typedef std::complex<double> cmplx;
 

@@ -5,8 +5,7 @@
  *      Author: Sefa Unal
  */
 
-#include <stdlib.h>
-#include <math.h>
+#include <cmath>
 
 #define SCALE_LINEAR(input, inputMin, inputMax, outputMin, outputMax) (((input)-(inputMin))*((outputMax)-(outputMin))/((inputMax)-(inputMin))+(outputMin))
 
@@ -48,7 +47,6 @@ void statistics_pdf(double *input, int inLength, double *range, int rangeLength,
     {
         total += output[i];
     }
-#include <stdio.h>
     printf("Total: %f\n", total);
 }
 
