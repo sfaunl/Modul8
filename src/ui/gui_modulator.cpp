@@ -8,9 +8,17 @@ void gui_modulator_main_window(App *app)
         static float f = 0.0f;
         static int counter = 0;
 
-        ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+        ImGui::Begin("Modulation Demo");
 
-        ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+        {
+            ImGui::Text("Modulation:");
+            ImGui::SameLine(); 
+            // Using the _simplified_ one-liner Combo() api here
+            // See "Combo" section for examples of how to use the more flexible BeginCombo()/EndCombo() api.
+            const char* items[] = { "BPSK", "QPSK", "8QAM", "16QAM"};
+            ImGui::Combo("Modulation", (int*)&app->mod->modType, items, IM_ARRAYSIZE(items));
+        }
+
         ImGui::Checkbox("Demo Window", &gui->show_demo_window);      // Edit bools storing our window open/close state
         ImGui::Checkbox("Another Window", &gui->show_about_window);
 

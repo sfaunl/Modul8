@@ -6,6 +6,13 @@
 
 typedef std::complex<double> cmplx;
 
+typedef enum{
+    MOD_BPSK,
+    MOD_QPSK,
+    MOD_8QAM,
+    MOD_16QAM
+} ModType;
+
 typedef struct{
     int     dataLength;
     uint8_t *data;      // data [0 1]
@@ -15,6 +22,7 @@ typedef struct{
     
     double  noiseSNRdB; // channel noise SNR in dB
 
+    ModType modType;
 } Mod;
 
 int modulator_run(void *userArg);

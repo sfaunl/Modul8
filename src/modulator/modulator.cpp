@@ -14,12 +14,6 @@ cmplx qpsk_constel[4] = {{1+1}, {-1+1}, {-1-1}, {1-1}};
 cmplx qam8_constel[8] = {{1+1}, {-1+1}, {-1-1}, {1-1}};
 cmplx qam16_constel[16] = {{1+1}, {-1+1}, {-1-1}, {1-1}};
 
-typedef enum{
-    MOD_BPSK,
-    MOD_QPSK,
-    MOD_8QAM,
-    MOD_16QAM
-} ModType;
 
 typedef struct{
     ModType type;
@@ -95,7 +89,7 @@ void channel(cmplx *symbols, cmplx *rxData, int length, double snr_db)
     double *rand_n = (double*)malloc(length * sizeof(double));
     statistics_dist_normal(rand_n, length, 0.0, 1.0);
     
-    cmplx noise[length];
+    cmplx *noise = (cmplx*)malloc(length * sizeof(cmplx));;
     for (int i=0; i<length; i++)
     {
         noise[i] = sqrt(noise_power / 2) * cmplx(1, 1) * rand_n[i];
@@ -107,6 +101,7 @@ void channel(cmplx *symbols, cmplx *rxData, int length, double snr_db)
         rxData[i] = symbols[i] + noise[i];
     }
     free(rand_n);
+    free(noise);
 }
 
 void modulate(uint8_t *inBits, cmplx *out, int length, ModType modType)
@@ -146,16 +141,17 @@ void mod_demo()
     mod.modData = (cmplx*)malloc(mod.dataLength * sizeof(cmplx));
     mod.rxData = (cmplx*)malloc(mod.dataLength * sizeof(cmplx));
     mod.demodData = (uint8_t*)malloc(mod.dataLength);
+    mod.modType = MOD_BPSK;
 
     generate_random_bits(mod.data, mod.dataLength);
-    modulate(mod.data, mod.modData, mod.dataLength, MOD_BPSK);
+    modulate(mod.data, mod.modData, mod.dataLength, mod.modType);
 
     double ber[NUM_SNR];
     for (int SNR_DB = 0; SNR_DB < NUM_SNR; SNR_DB++)
     {
         channel(mod.modData, mod.rxData, mod.dataLength, SNR_DB);
 
-        demodulate(mod.rxData, mod.demodData, mod.dataLength, MOD_BPSK);
+        demodulate(mod.rxData, mod.demodData, mod.dataLength, mod.modType);
 
         ber[SNR_DB] = calculate_ber(mod.data, mod.demodData, mod.dataLength);
     }
@@ -177,6 +173,7 @@ Mod *modulator_init()
     mod->modData = (cmplx*)malloc(mod->dataLength * sizeof(cmplx));
     mod->rxData = (cmplx*)malloc(mod->dataLength * sizeof(cmplx));
     mod->demodData = (uint8_t*)malloc(mod->dataLength);
+    mod->modType = MOD_BPSK;
 
     mod->noiseSNRdB = 2;
 
@@ -192,16 +189,16 @@ int modulator_run(void *userArg)
         int bits = mod->dataLength;
         generate_random_bits(mod->data, bits);
 
-        modulate(mod->data, mod->modData, bits, MOD_BPSK);
+        modulate(mod->data, mod->modData, bits, mod->modType);
 
         channel(mod->modData, mod->rxData, bits, mod->noiseSNRdB);
 
-        demodulate(mod->rxData, mod->demodData, bits, MOD_BPSK);
+        demodulate(mod->rxData, mod->demodData, bits, mod->modType);
 
         static double SER = 0;  // symbol error rate
         static double BER = 0;  // bit error rate
         
-        double _SER = calculate_ser(mod->data, mod->demodData, mod->dataLength, MOD_BPSK);
+        double _SER = calculate_ser(mod->data, mod->demodData, mod->dataLength, mod->modType);
         double _BER = calculate_ber(mod->data, mod->demodData, mod->dataLength);
 
         SER = (SER * 0.98 + _SER * 0.02);
