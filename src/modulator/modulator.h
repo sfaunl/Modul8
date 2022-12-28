@@ -4,7 +4,7 @@
 
 #include <complex>
 
-typedef std::complex<double> cmplx;
+typedef std::complex<float> cmplx;
 
 typedef enum{
     MOD_BPSK,
@@ -20,8 +20,9 @@ typedef struct{
     uint8_t *demodData; // demodulated data [0 1]
     cmplx   *rxData;    // modulated data after channel
     
-    double  noiseSNRdB; // channel noise SNR in dB
-
+    float   noiseSNRdB; // channel noise SNR in dB
+    float   bitErrorRate;
+    float   symbolErrorRate;
     ModType modType;
 } Mod;
 

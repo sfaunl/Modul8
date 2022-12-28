@@ -37,9 +37,9 @@ void generate_random_bits(uint8_t *bits, int length)
     }
 }
 
-double calculate_signal_power(cmplx *signal, int length)
+float calculate_signal_power(cmplx *signal, int length)
 {
-    double acc = 0.0;
+    float acc = 0.0;
     for (int i=0; i<length; i++)
     {
         acc += abs(pow(signal[i], 2));
@@ -48,9 +48,9 @@ double calculate_signal_power(cmplx *signal, int length)
 }
 
 // bit error rate
-double calculate_ber(uint8_t *txBits, uint8_t *rxBits, int length)
+float calculate_ber(uint8_t *txBits, uint8_t *rxBits, int length)
 {
-    double acc = 0.0;
+    float acc = 0.0;
     for (int i=0; i<length; i++)
     {
         acc += abs(txBits[i] - rxBits[i]);
@@ -59,11 +59,11 @@ double calculate_ber(uint8_t *txBits, uint8_t *rxBits, int length)
 }
 
 // symbol error rate
-double calculate_ser(uint8_t *txBits, uint8_t *rxBits, int length, ModType modType)
+float calculate_ser(uint8_t *txBits, uint8_t *rxBits, int length, ModType modType)
 {
     int bitSize = modList[modType].bitSize;
 
-    double acc = 0.0;
+    float acc = 0.0;
     for (int i=0; i<length; i+=bitSize)
     {
         int symbol = 0;
@@ -73,7 +73,7 @@ double calculate_ser(uint8_t *txBits, uint8_t *rxBits, int length, ModType modTy
         }
         acc += (symbol > 0) ? 1 : 0;
     }
-    return acc / ((double)length / bitSize);
+    return acc / ((float)length / bitSize);
 }
 
 // modData: input
@@ -171,9 +171,11 @@ Mod *modulator_init()
     mod->modData = (cmplx*)malloc(mod->dataLength * sizeof(cmplx));
     mod->rxData = (cmplx*)malloc(mod->dataLength * sizeof(cmplx));
     mod->demodData = (uint8_t*)malloc(mod->dataLength);
-    mod->modType = MOD_BPSK;
+    mod->modType = MOD_16QAM;
 
-    mod->noiseSNRdB = 2;
+    mod->noiseSNRdB = 14.0f;
+    mod->bitErrorRate = 0.0f;
+    mod->symbolErrorRate = 0.0f;
 
     return mod;
 }
@@ -193,20 +195,12 @@ int modulator_run(void *userArg)
 
         demodulate(mod->rxData, mod->demodData, bits, mod->modType);
 
-        static double SER = 0;  // symbol error rate
-        static double BER = 0;  // bit error rate
-        
-        double _SER = calculate_ser(mod->data, mod->demodData, mod->dataLength, mod->modType);
-        double _BER = calculate_ber(mod->data, mod->demodData, mod->dataLength);
+        float SER = calculate_ser(mod->data, mod->demodData, mod->dataLength, mod->modType);
+        float BER = calculate_ber(mod->data, mod->demodData, mod->dataLength);
 
-        SER = (SER * 0.98 + _SER * 0.02);
-        BER = (BER * 0.98 + _BER * 0.02);
+        mod->symbolErrorRate = (mod->symbolErrorRate * 0.8 + SER * 0.2);
+        mod->bitErrorRate = (mod->bitErrorRate * 0.8 + BER * 0.2);
 
-        for (int i=0; i<NUM_SNR; i++)
-        {
-            printf("%.6f ", BER );
-        }
-        printf("\n");
     }
     else
     {

@@ -9,7 +9,7 @@
 
 #define SCALE_LINEAR(input, inputMin, inputMax, outputMin, outputMax) (((input)-(inputMin))*((outputMax)-(outputMin))/((inputMax)-(inputMin))+(outputMin))
 
-void statistics_range(double *output, int length, double sig_min, double sig_max)
+void statistics_range(float *output, int length, float sig_min, float sig_max)
 {
     for (int i=0; i<length; i++)
     {
@@ -17,7 +17,7 @@ void statistics_range(double *output, int length, double sig_min, double sig_max
     }
 }
 
-void statistics_pdf(double *input, int inLength, double *range, int rangeLength, double *output)
+void statistics_pdf(float *input, int inLength, float *range, int rangeLength, float *output)
 {
     // clear output buffer
     for (int i = 0; i < rangeLength; i++) output[i] = 0.0;
@@ -42,7 +42,7 @@ void statistics_pdf(double *input, int inLength, double *range, int rangeLength,
     }
 
     // Total should be equal to 1
-    double total = 0;
+    float total = 0;
     for (int i = 0; i < rangeLength; i++)
     {
         total += output[i];
@@ -50,7 +50,7 @@ void statistics_pdf(double *input, int inLength, double *range, int rangeLength,
     printf("Total: %f\n", total);
 }
 
-double statistics_find_index(double *input, int length, double *range, double value)
+float statistics_find_index(float *input, int length, float *range, float value)
 {
     int i = 0;
     for (; i < length; i++)
@@ -70,7 +70,7 @@ void rand_init(unsigned int seed)
 {
     srand(seed);
 }
-double rand_normal(double mean, double stddev)
+double rand_normal(float mean, float stddev)
 {
     static double n2 = 0.0;
     static int n2_cached = 0;
@@ -102,28 +102,29 @@ double rand_normal(double mean, double stddev)
     }
 }
 
-void statistics_dist_uniform(double *signal, double length, double min, double max)
+void statistics_dist_uniform(float *signal, int length, float min, float max)
 {
     for(int i = 0; i < length; i++)
     {
-        double randx = (double) rand() / RAND_MAX;
+        float randx = (float) rand() / RAND_MAX;
         signal[i] = SCALE_LINEAR(randx, 0.0, 1.0, min, max);
     }
 }
 
-void statistics_dist_normal(double *signal, double length, double mean, double Q)
+void statistics_dist_normal(float *signal, int length, float mean, float Q)
 {
     for(int i = 0; i < length; i++)
     {
-        signal[i] = rand_normal(mean, Q);
+        signal[i] = (float)rand_normal(mean, Q);
     }
 }
 
-void statistics_dist_triangular(double *signal, double length, double lower, double peak, double upper)
+
+void statistics_dist_triangular(float *signal, int length, float lower, float peak, float upper)
 {
     for(int i = 0; i < length; i++)
     {
-        double randx = (double) rand() / RAND_MAX;
+        float randx = (float) rand() / RAND_MAX;
         if (randx < (peak-lower) / (upper-lower))
         {
             signal[i] = lower + sqrt(randx * (upper - lower) * (peak - lower));
