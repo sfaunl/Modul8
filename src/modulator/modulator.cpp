@@ -8,12 +8,15 @@
 
 #define SCALE_LINEAR(input, inputMin, inputMax, outputMin, outputMax) (((input)-(inputMin))*((outputMax)-(outputMin))/((inputMax)-(inputMin))+(outputMin))
 
-// TODO: check if these constellations are correct
-cmplx bpsk_constel[2] = {-1,1};
-cmplx qpsk_constel[4] = {{1+1}, {-1+1}, {-1-1}, {1-1}};
-cmplx qam8_constel[8] = {{1+1}, {-1+1}, {-1-1}, {1-1}};
-cmplx qam16_constel[16] = {{1+1}, {-1+1}, {-1-1}, {1-1}};
-
+// TODO: Should it be normalized?
+cmplx bpsk_constel[2] = {{-1,0}, {1,0}};
+cmplx qpsk_constel[4] = {{1,1}, {-1,1}, {-1,-1}, {1,-1}};
+cmplx qam8_constel[8] = {{-3,1}, {-1,1}, {1,1}, {3,1}, 
+                         {-3,-1}, {-1,-1}, {1,-1}, {3,-1}};
+cmplx qam16_constel[16] = {{-3,3}, {-1,3}, {1,3}, {3,3},
+                           {-3,1}, {-1,1}, {1,1}, {3,1},
+                           {-3,-1}, {-1,-1}, {1,-1}, {3,-1},
+                           {-3,-3}, {-1,-3}, {1,-3}, {3,-3}};
 
 typedef struct{
     ModType type;
