@@ -8,6 +8,7 @@ EXE = modulator
 IMGUI_DIR = src/ui/imgui
 SRC = src/main.cpp \
 src/app.cpp \
+src/ui/imgui_renderer.cpp \
 src/ui/gui.cpp \
 src/ui/gui_modulator.cpp \
 src/modulator/modulator.cpp
