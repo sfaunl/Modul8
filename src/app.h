@@ -2,7 +2,7 @@
 #define _APP_H
 
 #include "ui/gui.h"
-#include "modulator/modulator.h"
+#include "modulation.h"
 
 typedef struct{
     bool    keepRunning;

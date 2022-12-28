@@ -3,31 +3,20 @@
 #define MODULATOR_H_
 
 #include <complex>
+#include <stdint.h>
 
 typedef std::complex<float> cmplx;
 
-typedef enum{
-    MOD_BPSK,
-    MOD_QPSK,
-    MOD_8QAM,
-    MOD_16QAM
-} ModType;
+// Initializes random seed
+void mod_init(unsigned int seed);
 
-typedef struct{
-    int     dataLength;
-    uint8_t *data;      // data [0 1]
-    cmplx   *modData;   // modulated data (complex)
-    uint8_t *demodData; // demodulated data [0 1]
-    cmplx   *rxData;    // modulated data after channel
-    
-    float   noiseSNRdB; // channel noise SNR in dB
-    float   bitErrorRate;
-    float   symbolErrorRate;
-    ModType modType;
-} Mod;
+void mod_random_nbits(uint8_t *bits, int length);
+float mod_signal_power(cmplx *signal, int length);
+float mod_bit_error_rate(uint8_t *txBits, uint8_t *rxBits, int length);
+float mod_symbol_error_rate(uint8_t *txBits, uint8_t *rxBits, int length, int nBits);
+void mod_gaussian_channel(cmplx *symbols, cmplx *output, int length, float snr_db);
+void mod_modulate(uint8_t *inBits, cmplx *out, int length, int nBits, cmplx *constellationList);
+void mod_demodulate(cmplx *symbols, uint8_t *outBits, int length, int nBits, cmplx *constellationList);
 
-int modulator_run(void *userArg);
-
-Mod *modulator_init();
 
 #endif /* MODULATOR_H_ */
