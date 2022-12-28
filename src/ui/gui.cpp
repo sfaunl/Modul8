@@ -21,13 +21,13 @@ Gui *gui_init()
 {
 // get html5 canvas size
 #ifdef __EMSCRIPTEN__
-    window_width = EM_ASM_INT_V(return window.innerWidth 
+    window_width = EM_ASM_INT(return window.innerWidth 
         || document.documentElement.clientWidth 
-        || document.body.clientWidth
+        || document.body.clientWidth, NULL
     );
-    window_height = EM_ASM_INT_V(return window.innerHeight
+    window_height = EM_ASM_INT(return window.innerHeight
         || document.documentElement.clientHeight
-        || document.body.clientHeight
+        || document.body.clientHeight, NULL
     );
     window_width = (window_width * 7) / 8;
     window_height = (window_height * 7) / 8;
