@@ -91,6 +91,8 @@ void gui_modulator_main_window(App *app)
         ImGui::Begin("About", &gui->show_about_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
         ImGui::Text("Modulation Demo");
         ImGui::Text("sefaunal.com/p/mod_demo");
+        ImGui::Text("Build time: " __DATE__ " " __TIME__);
+        
         if (ImGui::Button("Close"))
             gui->show_about_window = false;
         ImGui::End();
