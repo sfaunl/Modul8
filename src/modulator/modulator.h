@@ -30,7 +30,4 @@ int modulator_run(void *userArg);
 
 Mod *modulator_init();
 
-void mod_demo();
-
-
 #endif /* MODULATOR_H_ */

@@ -130,41 +130,6 @@ void demodulate(cmplx *symbols, uint8_t *outBits, int length, ModType modType)
     }
 }
 
-void mod_demo()
-{
-    #define NUM_SNR 20
-
-    // srand(time(0));
-    srand(0);
-    Mod mod;
-    mod.dataLength = 100000;
-    mod.data = (uint8_t*)malloc(mod.dataLength);
-    mod.modData = (cmplx*)malloc(mod.dataLength * sizeof(cmplx));
-    mod.rxData = (cmplx*)malloc(mod.dataLength * sizeof(cmplx));
-    mod.demodData = (uint8_t*)malloc(mod.dataLength);
-    mod.modType = MOD_BPSK;
-
-    generate_random_bits(mod.data, mod.dataLength);
-    modulate(mod.data, mod.modData, mod.dataLength, mod.modType);
-
-    double ber[NUM_SNR];
-    for (int SNR_DB = 0; SNR_DB < NUM_SNR; SNR_DB++)
-    {
-        channel(mod.modData, mod.rxData, mod.dataLength, SNR_DB);
-
-        demodulate(mod.rxData, mod.demodData, mod.dataLength, mod.modType);
-
-        ber[SNR_DB] = calculate_ber(mod.data, mod.demodData, mod.dataLength);
-    }
-
-    for (int i=0; i<NUM_SNR; i++)
-    {
-        printf("%.6f ", ber[i] );
-    }
-    printf("\n");
-}
-
-
 Mod *modulator_init()
 {
     Mod *mod = (Mod*)malloc(sizeof(Mod));

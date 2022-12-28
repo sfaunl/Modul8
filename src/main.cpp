@@ -4,8 +4,6 @@
 // Main code
 int main(int, char**)
 {
-    mod_demo();
-    
     App *app = app_init();
     app->gui = gui_init();
     app->mod = modulator_init();
