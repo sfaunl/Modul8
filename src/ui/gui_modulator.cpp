@@ -28,7 +28,7 @@ void gui_modulator_main_window(App *app)
 
     const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 10, main_viewport->WorkPos.y + 30), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(480, 115), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(480, -1), ImGuiCond_FirstUseEver);
     ImGui::Begin("Modulation Demo");
     {
         ImGui::Combo("Modulation", (int*)&app->mod->modType, modTypeStr, IM_ARRAYSIZE(modTypeStr));
@@ -58,7 +58,7 @@ void gui_modulator_main_window(App *app)
     }
 
     ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 10, main_viewport->WorkPos.y + 160), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(480, 400), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(480, -1), ImGuiCond_FirstUseEver);
     ImGui::Begin("Constellations");
     {
         if (ImPlot::BeginPlot("Constellations")) {
@@ -70,8 +70,7 @@ void gui_modulator_main_window(App *app)
     ImGui::End();
 
     ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 500, main_viewport->WorkPos.y + 30), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(480, 680), ImGuiCond_FirstUseEver);
-    ImGui::Begin("Data");
+    ImGui::SetNextWindowSize(ImVec2(480, -1), ImGuiCond_FirstUseEver);
     {
         if (ImPlot::BeginPlot("Input bit stream")) {
             ImPlot::PlotStairs("Input", x_data, app->mod->data, N, ImPlotStairsFlags_PreStep);
