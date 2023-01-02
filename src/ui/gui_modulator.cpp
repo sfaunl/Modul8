@@ -31,6 +31,8 @@ void gui_modulator_main_window(App *app)
     ImGui::SetNextWindowSize(ImVec2(480, -1), ImGuiCond_FirstUseEver);
     ImGui::Begin("Modulation Demo");
     {
+        if (ImGui::Button("Continue/Pause"))
+            app->mod->running ^= true;
         ImGui::Combo("Modulation", (int*)&app->mod->modType, modTypeStr, IM_ARRAYSIZE(modTypeStr));
         ImGui::SliderFloat("SNR(dB)", &app->mod->noiseSNRdB, 0.0f, 50.0f);
         ImGui::Text("Bit Error Rate = %.6f%%", 100 * app->mod->bitErrorRate);

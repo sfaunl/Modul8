@@ -14,6 +14,7 @@ typedef enum{
 } ModType;
 
 typedef struct{
+    bool    running;
     int     numSymbols;
     uint8_t *data;      // data [0 1]
     cmplx   *modData;   // modulated data (complex)
