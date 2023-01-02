@@ -46,6 +46,16 @@ Mod *modulation_init()
     return mod;
 }
 
+void mod_nbits(uint8_t *bits, int length)
+{   
+    int bit = 1;
+    for (int i=0; i<length; i++)
+    {
+        bits[i] = bit; 
+        bit ^= 1;
+    }
+}
+
 int modulation_run(void *userArg)
 {
     App *app = (App*)userArg;
@@ -59,7 +69,8 @@ int modulation_run(void *userArg)
             int dataSize = symbolSize * nBits;
             cmplx *constelList = modList[mod->modType].constel;
             
-            mod_random_nbits(mod->data, dataSize);
+            // mod_random_nbits(mod->data, dataSize);
+            mod_nbits(mod->data, dataSize);
 
             mod_modulate(mod->data, mod->modData, dataSize, nBits, constelList);
 
