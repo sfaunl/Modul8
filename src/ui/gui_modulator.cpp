@@ -1,7 +1,7 @@
 #include "gui_modulator.h"
 
 // TODO: move to modulator.h
-const char* modTypeStr[] = { "BPSK", "QPSK", "8QAM", "16QAM", "64QAM", "256QAM", "1024QAM", "4096QAM"};
+const char* modTypeStr[] = {"ASK", "BPSK", "QPSK", "8PSK", "8QAM", "16QAM", "64QAM", "256QAM", "1024QAM", "4096QAM"};
 
 void gui_modulator_main_window(App *app)
 {

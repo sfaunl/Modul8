@@ -7,8 +7,10 @@
 typedef std::complex<float> cmplx;
 
 typedef enum{
+    MOD_ASK,
     MOD_BPSK,
     MOD_QPSK,
+    MOD_8PSK,
     MOD_8QAM,
     MOD_16QAM,
     MOD_64QAM,

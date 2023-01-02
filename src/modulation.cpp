@@ -3,8 +3,11 @@
 #include "app.h"
 
 // TODO: Should it be normalized?
+cmplx ask_constel[2] = {{1,0}, {0,0}};
 cmplx bpsk_constel[2] = {{-1,0}, {1,0}};
 cmplx qpsk_constel[4] = {{1,1},  {-1,1}, {-1,-1}, {1,-1}};
+cmplx psk8_constel[8] = {{M_SQRT1_2, 0}, {0.5, 0.5}, {-0, M_SQRT1_2}, {-0.5,-0.5},
+                         {-M_SQRT1_2,0}, {-0.5,0.5}, {-0,-M_SQRT1_2}, {0.5, -0.5}};
 cmplx qam8_constel[8] = {{-3,1},  {-1,1},  {1,1},  {3,1}, 
                          {-3,-1}, {-1,-1}, {1,-1}, {3,-1}};
 cmplx qam16_constel[16] = {{-3,3},  {-1,3},  {1,3},  {3,3},
@@ -31,8 +34,10 @@ typedef struct{
 } Modulation;
 
 Modulation modList[] = {
+    {MOD_ASK,   1,  ask_constel},
     {MOD_BPSK,  1,  bpsk_constel},
     {MOD_QPSK,  2,  qpsk_constel},
+    {MOD_8PSK,  3,  psk8_constel},
     {MOD_8QAM,  3,  qam8_constel},
     {MOD_16QAM, 4,  qam16_constel},
     {MOD_64QAM, 6,  qam64_constel},
@@ -106,6 +111,7 @@ Mod *modulation_init()
     modulation_calculate_qam(qam1024_constel, 10);
     modulation_calculate_qam(qam4096_constel, 12);
     // Normalize constellations
+    for (int i=0; i<8; i++) psk8_constel[i] /= M_SQRT1_2;
     for (int i=0; i<8; i++) qam8_constel[i] /= 3.0f;
     for (int i=0; i<16; i++) qam16_constel[i] /= 3.0f;
     for (int i=0; i<64; i++) qam64_constel[i] /= 7.0f;
