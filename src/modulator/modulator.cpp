@@ -46,7 +46,7 @@ void mod_random_nbits(uint8_t *bits, int length)
 {
     for (int i=0; i<length; i++)
     {
-        bits[i] = rand() > RAND_MAX / 2; 
+        bits[i] = (uint8_t)(rand() > RAND_MAX / 2); 
     }
 }
 
@@ -110,27 +110,27 @@ void mod_gaussian_channel(cmplx *symbols, cmplx *output, int length, float snr_d
 
 // int bitSize = modList[modType].bitSize;
 // nBits should equal to log2(numElements(constelList))
-void mod_modulate(uint8_t *inBits, cmplx *out, int length, int nBits, cmplx *constellationList)
+void mod_modulate(uint8_t *inBits, cmplx *out, int inBitsLength, int symbolNBits, cmplx *constellationList)
 {
-    for (int i=0; i<length; i+=nBits)
+    for (int i=0; i<inBitsLength; i+=symbolNBits)
     {
         int symbol = 0;
-        for(int bit=0; bit<nBits; bit++)
+        for(int bit=0; bit<symbolNBits; bit++)
         {
             symbol |= inBits[i + bit];
             symbol <<= 1;
         }
         symbol >>= 1;
-        out[i / nBits] = constellationList[symbol];
+        out[i / symbolNBits] = constellationList[symbol];
     }
 }
 
 // TODO only does BPSK currently
-void mod_demodulate(cmplx *symbols, uint8_t *outBits, int length, int nBits, cmplx *constellationList)
+void mod_demodulate(cmplx *symbols, uint8_t *outBits, int outBitsLength, int nBits, cmplx *constellationList)
 {
     (void)nBits;
     (void)constellationList;
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < outBitsLength / nBits; i++) {
         outBits[i] = (real(symbols[i]) < 0) ? 0 : 1;
     }
 }

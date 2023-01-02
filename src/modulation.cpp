@@ -25,22 +25,22 @@ Modulation modList[] = {
     {MOD_8QAM,  3,  qam8_constel},
     {MOD_16QAM, 4,  qam16_constel}
 };
-
+static const int MAX_SYMBOLSIZE = 16;
 
 Mod *modulation_init()
 {
-    Mod *mod = (Mod*)malloc(sizeof(Mod));
+    Mod *mod = new Mod();
 
-    mod->dataLength = 100000;
-    mod->data = (uint8_t*)malloc(mod->dataLength);
-    mod->modData = (cmplx*)malloc(mod->dataLength * sizeof(cmplx));
-    mod->rxData = (cmplx*)malloc(mod->dataLength * sizeof(cmplx));
-    mod->demodData = (uint8_t*)malloc(mod->dataLength);
-    mod->modType = MOD_16QAM;
+    mod->numSymbols = 1000;
+    mod->data       = new uint8_t[mod->numSymbols * MAX_SYMBOLSIZE];
+    mod->modData    = new cmplx[mod->numSymbols];
+    mod->rxData     = new cmplx[mod->numSymbols];
+    mod->demodData  = new uint8_t[mod->numSymbols * MAX_SYMBOLSIZE];
+    mod->modType    = MOD_16QAM;
 
-    mod->noiseSNRdB = 14.0f;
-    mod->bitErrorRate = 0.0f;
-    mod->symbolErrorRate = 0.0f;
+    mod->noiseSNRdB         = 14.0f;
+    mod->bitErrorRate       = 0.0f;
+    mod->symbolErrorRate    = 0.0f;
 
     return mod;
 }
@@ -53,18 +53,20 @@ int modulation_run(void *userArg)
     {
         int dataSize = mod->dataLength;
         int nBits = modList[mod->modType].bitSize;
+        int symbolSize = mod->numSymbols;
+        int dataSize = symbolSize * nBits;
         cmplx *constelList = modList[mod->modType].constel;
         
         mod_random_nbits(mod->data, dataSize);
 
         mod_modulate(mod->data, mod->modData, dataSize, nBits, constelList);
 
-        mod_gaussian_channel(mod->modData, mod->rxData, dataSize, mod->noiseSNRdB);
+        mod_gaussian_channel(mod->modData, mod->rxData, symbolSize, mod->noiseSNRdB);
 
         mod_demodulate(mod->rxData, mod->demodData, dataSize, nBits, constelList);
 
-        float SER = mod_symbol_error_rate(mod->data, mod->demodData, mod->dataLength, nBits);
-        float BER = mod_bit_error_rate(mod->data, mod->demodData, mod->dataLength);
+        float SER = mod_symbol_error_rate(mod->data, mod->demodData, dataSize, nBits);
+        float BER = mod_bit_error_rate(mod->data, mod->demodData, dataSize);
 
         mod->symbolErrorRate = (mod->symbolErrorRate * 0.8 + SER * 0.2);
         mod->bitErrorRate = (mod->bitErrorRate * 0.8 + BER * 0.2);
