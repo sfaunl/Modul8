@@ -28,7 +28,7 @@ void gui_modulator_main_window(App *app)
 
     const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 10, main_viewport->WorkPos.y + 30), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(480, -1), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(350, -1), ImGuiCond_FirstUseEver);
     ImGui::Begin("Modulation Demo");
     {
         if (ImGui::Button("Continue/Pause"))
@@ -60,7 +60,7 @@ void gui_modulator_main_window(App *app)
     }
 
     ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 10, main_viewport->WorkPos.y + 180), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(480, -1), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(350, -1), ImGuiCond_FirstUseEver);
     ImGui::Begin("Constellations");
     {
         if (ImPlot::BeginPlot("Constellations")) { //ImPlotFlags_Equal
@@ -73,8 +73,8 @@ void gui_modulator_main_window(App *app)
     }
     ImGui::End();
 
-    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 500, main_viewport->WorkPos.y + 30), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(480, -1), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 370, main_viewport->WorkPos.y + 30), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(350, -1), ImGuiCond_FirstUseEver);
     ImGui::Begin("Bit stream");
     {    
         static bool subplots = false;
@@ -115,8 +115,8 @@ void gui_modulator_main_window(App *app)
     }
     ImGui::End();
 
-    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 500, main_viewport->WorkPos.y + 300), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(480, -1), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 370, main_viewport->WorkPos.y + 300), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(350, -1), ImGuiCond_FirstUseEver);
     ImGui::Begin("Modulated Data");
     {   
         static bool subplots = false;
