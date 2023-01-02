@@ -125,12 +125,31 @@ void mod_modulate(uint8_t *inBits, cmplx *out, int inBitsLength, int symbolNBits
     }
 }
 
-// TODO only does BPSK currently
-void mod_demodulate(cmplx *symbols, uint8_t *outBits, int outBitsLength, int nBits, cmplx *constellationList)
+void mod_demodulate(cmplx *symbols, uint8_t *outBits, int outBitsLength, int symbolNBits, cmplx *constellationList)
 {
-    (void)nBits;
-    (void)constellationList;
-    for (int i = 0; i < outBitsLength / nBits; i++) {
-        outBits[i] = (real(symbols[i]) < 0) ? 0 : 1;
+    for (int b = 0; b < outBitsLength / symbolNBits; b++) {
+        int constElements = pow(2,symbolNBits);
+        float dist[constElements];
+        for (int s = 0; s < constElements; s++)
+        {
+            dist[s] = abs(constellationList[s] - symbols[b]);
+        }
+
+        int symbol = 0;
+        int i = 0;
+        float minDist = dist[0];
+        for(i = 1; i < constElements; i++){
+            if(minDist > dist[i])
+            { 
+                minDist = dist[i];
+                symbol = i;
+            }
+        }
+
+        for(int bit=0; bit<symbolNBits; bit++)
+        {
+            symbol <<= 1;
+            outBits[b * symbolNBits + bit] = (symbol & (1 << symbolNBits)) > 0;
+        }
     }
 }
