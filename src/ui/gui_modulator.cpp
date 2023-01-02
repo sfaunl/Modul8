@@ -52,8 +52,8 @@ void gui_modulator_main_window(App *app)
         static bool constel = false;
         ImGui::Checkbox("Show constellations", &constel);
         if (ImPlot::BeginPlot("Constellations", ImVec2(-1, -1), ImPlotFlags_NoTitle)) { 
-            ImPlot::SetupAxisLimits(ImAxis_X1, -2.0f, 2.0f);
-            ImPlot::SetupAxisLimits(ImAxis_Y1, -2.0f, 2.0f);
+            ImPlot::SetupAxisLimits(ImAxis_X1, -1.5f, 1.5f);
+            ImPlot::SetupAxisLimits(ImAxis_Y1, -1.5f, 1.5f);
             ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle, 1);
             // cmplx* is an array of a structure which has float real and imaginary numbers inside. 
             // memory structure of cmplx is in this way: [RIRIRIRI...]
@@ -137,7 +137,7 @@ void gui_modulator_main_window(App *app)
                     ImPlot::EndPlot();
                 }
                 if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
-                    ImPlot::SetupAxisLimits(ImAxis_Y1, -2.0f, 2.0f);
+                    ImPlot::SetupAxisLimits(ImAxis_Y1, -1.5f, 1.5f);
                     ImPlot::SetupAxes(NULL,"Demodulated",ImPlotAxisFlags_None,ImPlotAxisFlags_Lock);
                     ImPlot::PlotLine("Demodulated", (float*)app->mod->rxData, symbolSize, 1.0, 0.0, 0, sizeof(float)*2);
                     ImPlot::EndPlot();
@@ -148,7 +148,7 @@ void gui_modulator_main_window(App *app)
         else
         {
             if (ImPlot::BeginPlot("Modulated Data", ImVec2(-1,-1), ImPlotFlags_NoTitle)) {
-                ImPlot::SetupAxisLimits(ImAxis_Y1, -2.0f, 2.0f);
+                ImPlot::SetupAxisLimits(ImAxis_Y1, -1.5f, 1.5f);
                 ImPlot::SetupAxis(ImAxis_Y1, NULL, ImPlotAxisFlags_Lock);
                 ImPlot::PlotLine("Modulated", (float*)app->mod->modData, symbolSize, 1.0, 0.0, 0, sizeof(float)*2);
                 ImPlot::PlotLine("Demodulated", (float*)app->mod->rxData, symbolSize, 1.0, 0.0, 0, sizeof(float)*2);
