@@ -51,7 +51,6 @@ int modulation_run(void *userArg)
     Mod *mod = app->mod;
     if(app->keepRunning)
     {
-        int dataSize = mod->dataLength;
         int nBits = modList[mod->modType].bitSize;
         int symbolSize = mod->numSymbols;
         int dataSize = symbolSize * nBits;
