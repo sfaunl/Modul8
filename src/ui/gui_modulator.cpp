@@ -49,19 +49,27 @@ void gui_modulator_main_window(App *app)
     ImGui::SetNextWindowSize(ImVec2(350, 350), ImGuiCond_FirstUseEver);
     ImGui::Begin("Constellation Diagram");
     {
+        static bool constel = false;
+        ImGui::Checkbox("Show constellations", &constel);
         if (ImPlot::BeginPlot("Constellations", ImVec2(-1, -1), ImPlotFlags_NoTitle)) { 
             ImPlot::SetupAxisLimits(ImAxis_X1, -2.0f, 2.0f);
             ImPlot::SetupAxisLimits(ImAxis_Y1, -2.0f, 2.0f);
             ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle, 1);
-            ImPlot::PlotScatter("Modulated Data", (float*)app->mod->rxData, 
-            ((float*)app->mod->rxData) + 1, symbolSize, 0, 0, sizeof(float) * 2);
             // cmplx* is an array of a structure which has float real and imaginary numbers inside. 
             // memory structure of cmplx is in this way: [RIRIRIRI...]
             // So using stride of two element size and using same pointer twice with one of them with one size of a float offset, we can plot scatter.
             // [RIRIRI], [IRIRI]
+            ImPlot::PlotScatter("Modulated Data", 
+            (float*)app->mod->rxData, 
+            ((float*)app->mod->rxData) + 1, 
+            symbolSize, 0, 0, sizeof(float) * 2);
+
+            if (constel)
+            {
             ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle, 1);
             ImPlot::PlotScatter(modTypeStr[app->mod->modType], (float*)modulation_get_constellation_data(app->mod),
             ((float*)modulation_get_constellation_data(app->mod)) + 1, modulation_get_symbol_element_size(app->mod), 0, 0, sizeof(float) * 2);
+            }
             ImPlot::EndPlot();
         }
     }
