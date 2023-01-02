@@ -38,6 +38,8 @@ void gui_modulator_main_window(App *app)
         ImGui::SliderInt("symbol/frame", &app->mod->numSymbols, 10, 10000);
         ImGui::Combo("Modulation", (int*)&app->mod->modType, modTypeStr, IM_ARRAYSIZE(modTypeStr));
         ImGui::SliderFloat("SNR(dB)", &app->mod->noiseSNRdB, 0.0f, 50.0f);
+        ImGui::Text("Bit Rate = %.2f kbps", dataSize * ImGui::GetIO().Framerate / (1024.0));
+        ImGui::Text("Symbol Rate = %.2f ksps", symbolSize * ImGui::GetIO().Framerate / (1000.0));
         ImGui::Text("Bit Error Rate = %.6f%%", 100 * app->mod->bitErrorRate);
         ImGui::Text("Symbol Error Rate = %.6f%%", 100 * app->mod->symbolErrorRate);
     }
