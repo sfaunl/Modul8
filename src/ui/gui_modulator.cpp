@@ -1,7 +1,7 @@
 #include "gui_modulator.h"
 
 // TODO: move to modulator.h
-const char* modTypeStr[] = { "BPSK", "QPSK", "8QAM", "16QAM"};
+const char* modTypeStr[] = { "BPSK", "QPSK", "8QAM", "16QAM", "64QAM"};
 
 void gui_modulator_main_window(App *app)
 {
@@ -33,7 +33,7 @@ void gui_modulator_main_window(App *app)
     {
         if (ImGui::Button("Continue/Pause"))
             app->mod->running ^= true;
-        // ImGui::SliderInt("symbol/frame", &app->mod->numSymbols, 10, 10000);
+        // ImGui::SliderInt("symbol/frame", &app->mod->symbolSize, 10, 10000);
         ImGui::Combo("Modulation", (int*)&app->mod->modType, modTypeStr, IM_ARRAYSIZE(modTypeStr));
         ImGui::SliderFloat("SNR(dB)", &app->mod->noiseSNRdB, 0.0f, 50.0f);
         ImGui::Text("Bit Error Rate = %.6f%%", 100 * app->mod->bitErrorRate);
@@ -41,20 +41,21 @@ void gui_modulator_main_window(App *app)
     }
     ImGui::End();
 
-    int numSymbols = app->mod->numSymbols;
-    int bitLength = numSymbols * (app->mod->modType + 1); // TODO: fix this hack
-    float x_datad[bitLength];
-    for (int i=0; i<bitLength; i++) x_datad[i] = (float)i;
+    int symbolSize = modulation_get_symbol_size(app->mod);
+    int dataSize = modulation_get_data_size(app->mod);
 
-    float real_arrayrx[numSymbols];
-    float imag_arrayrx[numSymbols];
-    for (int i=0; i<numSymbols; i++) {
+    float x_datad[dataSize];
+    for (int i=0; i<dataSize; i++) x_datad[i] = (float)i;
+
+    float real_arrayrx[symbolSize];
+    float imag_arrayrx[symbolSize];
+    for (int i=0; i<symbolSize; i++) {
         real_arrayrx[i] = real(app->mod->rxData[i]);
         imag_arrayrx[i] = imag(app->mod->rxData[i]);
     }
-    float real_array[numSymbols];
-    float imag_array[numSymbols];
-    for (int i=0; i<numSymbols; i++) {
+    float real_array[symbolSize];
+    float imag_array[symbolSize];
+    for (int i=0; i<symbolSize; i++) {
         real_array[i] = real(app->mod->modData[i]);
         imag_array[i] = imag(app->mod->modData[i]);
     }
@@ -64,10 +65,10 @@ void gui_modulator_main_window(App *app)
     ImGui::Begin("Constellations");
     {
         if (ImPlot::BeginPlot("Constellations")) { //ImPlotFlags_Equal
-            ImPlot::SetupAxisLimits(ImAxis_X1, -7.0f, 7.0f);
-            ImPlot::SetupAxisLimits(ImAxis_Y1, -7.0f, 7.0f);
-            ImPlot::PlotScatter("Modulated Data", real_arrayrx, imag_arrayrx, numSymbols);
-            ImPlot::PlotScatter(modTypeStr[app->mod->modType], real_array, imag_array, numSymbols); // TODO: change modData to a fixed constellation data
+            ImPlot::SetupAxisLimits(ImAxis_X1, -2.0f, 2.0f);
+            ImPlot::SetupAxisLimits(ImAxis_Y1, -2.0f, 2.0f);
+            ImPlot::PlotScatter("Modulated Data", real_arrayrx, imag_arrayrx, symbolSize);
+            ImPlot::PlotScatter(modTypeStr[app->mod->modType], real_array, imag_array, symbolSize); // TODO: change modData to a fixed constellation data
             ImPlot::EndPlot();
         }
     }
@@ -88,15 +89,15 @@ void gui_modulator_main_window(App *app)
             rratios, cratios)) {
                 if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
                     ImPlot::SetupAxisLimits(ImAxis_Y1, -0.5f, 1.5f);
-                    ImPlot::SetupAxisLimits(ImAxis_X1, -1.0, bitLength + 1.0f);
+                    ImPlot::SetupAxisLimits(ImAxis_X1, -1.0, dataSize + 1.0f);
                     ImPlot::SetupAxes(NULL,"Input",ImPlotAxisFlags_NoLabel | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels,
                     ImPlotAxisFlags_NoGridLines | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_Lock);
-                    ImPlot::PlotStairs("Input", app->mod->data, bitLength);
+                    ImPlot::PlotStairs("Input", app->mod->data, dataSize);
                     ImPlot::EndPlot();
                 }
                 if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
                     ImPlot::SetupAxes(NULL,"Output",0,ImPlotAxisFlags_NoGridLines | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_Lock);
-                    ImPlot::PlotStairs("Output", app->mod->demodData, bitLength);
+                    ImPlot::PlotStairs("Output", app->mod->demodData, dataSize);
                     ImPlot::EndPlot();
                 }
                 ImPlot::EndSubplots();
@@ -105,10 +106,10 @@ void gui_modulator_main_window(App *app)
         else{
             if (ImPlot::BeginPlot("Bit stream", ImVec2(-1,200))) {
                 ImPlot::SetupAxisLimits(ImAxis_Y1, -0.5f, 1.5f);
-                ImPlot::SetupAxisLimits(ImAxis_X1, -1.0, bitLength + 1.0f);
+                ImPlot::SetupAxisLimits(ImAxis_X1, -1.0, dataSize + 1.0f);
                 ImPlot::SetupAxis(ImAxis_Y1, NULL, ImPlotAxisFlags_Lock);
-                ImPlot::PlotStairs("Input", app->mod->data, bitLength);
-                ImPlot::PlotStairs("Output", app->mod->demodData, bitLength);
+                ImPlot::PlotStairs("Input", app->mod->data, dataSize);
+                ImPlot::PlotStairs("Output", app->mod->demodData, dataSize);
                 ImPlot::EndPlot();
             }
         }
@@ -131,13 +132,13 @@ void gui_modulator_main_window(App *app)
                 if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
                     ImPlot::SetupAxes(NULL,"Modulated",ImPlotAxisFlags_NoLabel | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels,
                     ImPlotAxisFlags_Lock);
-                    ImPlot::PlotLine("Modulated", x_datad, real_array, numSymbols);
+                    ImPlot::PlotLine("Modulated", x_datad, real_array, symbolSize);
                     ImPlot::EndPlot();
                 }
                 if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
-                    ImPlot::SetupAxisLimits(ImAxis_Y1, -7.0f, 7.0f);
+                    ImPlot::SetupAxisLimits(ImAxis_Y1, -2.0f, 2.0f);
                     ImPlot::SetupAxes(NULL,"Demodulated",ImPlotAxisFlags_None,ImPlotAxisFlags_Lock);
-                    ImPlot::PlotLine("Demodulated", x_datad, real_arrayrx, numSymbols);
+                    ImPlot::PlotLine("Demodulated", x_datad, real_arrayrx, symbolSize);
                     ImPlot::EndPlot();
                 }
                 ImPlot::EndSubplots();
@@ -146,10 +147,10 @@ void gui_modulator_main_window(App *app)
         else
         {
             if (ImPlot::BeginPlot("Modulated Data", ImVec2(-1,200))) {
-                ImPlot::SetupAxisLimits(ImAxis_Y1, -7.0f, 7.0f);
+                ImPlot::SetupAxisLimits(ImAxis_Y1, -2.0f, 2.0f);
                 ImPlot::SetupAxis(ImAxis_Y1, NULL, ImPlotAxisFlags_Lock);
-                ImPlot::PlotLine("Modulated", x_datad, real_array, numSymbols);
-                ImPlot::PlotLine("Demodulated", x_datad, real_arrayrx, numSymbols);
+                ImPlot::PlotLine("Modulated", x_datad, real_array, symbolSize);
+                ImPlot::PlotLine("Demodulated", x_datad, real_arrayrx, symbolSize);
                 ImPlot::EndPlot();
             }
         }

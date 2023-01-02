@@ -10,7 +10,8 @@ typedef enum{
     MOD_BPSK,
     MOD_QPSK,
     MOD_8QAM,
-    MOD_16QAM
+    MOD_16QAM,
+    MOD_64QAM
 } ModType;
 
 typedef struct{
@@ -32,5 +33,8 @@ typedef struct{
 int modulation_run(void *userArg);
 
 Mod *modulation_init();
+
+int modulation_get_data_size(Mod *mod);
+int modulation_get_symbol_size(Mod *mod);
 
 #endif /* MODULATION_H_ */

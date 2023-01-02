@@ -72,7 +72,7 @@ float mod_bit_error_rate(uint8_t *txBits, uint8_t *rxBits, int length)
 }
 
 // symbol error rate
-    // int bitSize = modList[modType].bitSize;
+// int bitSize = modList[modType].bitSize;
 float mod_symbol_error_rate(uint8_t *txBits, uint8_t *rxBits, int length, int nBits)
 {
     float acc = 0.0;
@@ -136,9 +136,8 @@ void mod_demodulate(cmplx *symbols, uint8_t *outBits, int outBitsLength, int sym
         }
 
         int symbol = 0;
-        int i = 0;
         float minDist = dist[0];
-        for(i = 1; i < constElements; i++){
+        for(int i = 1; i < constElements; i++){
             if(minDist > dist[i])
             { 
                 minDist = dist[i];

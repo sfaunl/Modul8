@@ -2,16 +2,23 @@
 #include "modulation.h"
 #include "app.h"
 
-
 // TODO: Should it be normalized?
 cmplx bpsk_constel[2] = {{-1,0}, {1,0}};
-cmplx qpsk_constel[4] = {{1,1}, {-1,1}, {-1,-1}, {1,-1}};
-cmplx qam8_constel[8] = {{-3,1}, {-1,1}, {1,1}, {3,1}, 
+cmplx qpsk_constel[4] = {{1,1},  {-1,1}, {-1,-1}, {1,-1}};
+cmplx qam8_constel[8] = {{-3,1},  {-1,1},  {1,1},  {3,1}, 
                          {-3,-1}, {-1,-1}, {1,-1}, {3,-1}};
-cmplx qam16_constel[16] = {{-3,3}, {-1,3}, {1,3}, {3,3},
-                           {-3,1}, {-1,1}, {1,1}, {3,1},
+cmplx qam16_constel[16] = {{-3,3},  {-1,3},  {1,3},  {3,3},
+                           {-3,1},  {-1,1},  {1,1},  {3,1},
                            {-3,-1}, {-1,-1}, {1,-1}, {3,-1},
                            {-3,-3}, {-1,-3}, {1,-3}, {3,-3}};
+cmplx qam64_constel[64] = { {-7,7},  {-5,7},  {-3,7},  {-1,7},  {1,7},  {3,7},  {5,7},  {7,7}, 
+                            {-7,5},  {-5,5},  {-3,5},  {-1,5},  {1,5},  {3,5},  {5,5},  {7,5}, 
+                            {-7,3},  {-5,3},  {-3,3},  {-1,3},  {1,3},  {3,3},  {5,3},  {7,3}, 
+                            {-7,1},  {-5,1},  {-3,1},  {-1,1},  {1,1},  {3,1},  {5,1},  {7,1}, 
+                            {-7,-1}, {-5,-1}, {-3,-1}, {-1,-1}, {1,-1}, {3,-1}, {5,-1}, {7,-1}, 
+                            {-7,-3}, {-5,-3}, {-3,-3}, {-1,-3}, {1,-3}, {3,-3}, {5,-3}, {7,-3}, 
+                            {-7,-5}, {-5,-5}, {-3,-5}, {-1,-5}, {1,-5}, {3,-5}, {5,-5}, {7,-5},
+                            {-7,-7}, {-5,-7}, {-3,-7}, {-1,-7}, {1,-7}, {3,-7}, {5,-7}, {7,-7}};
 
 typedef struct{
     ModType type;
@@ -23,10 +30,24 @@ Modulation modList[] = {
     {MOD_BPSK,  1,  bpsk_constel},
     {MOD_QPSK,  2,  qpsk_constel},
     {MOD_8QAM,  3,  qam8_constel},
-    {MOD_16QAM, 4,  qam16_constel}
+    {MOD_16QAM, 4,  qam16_constel},
+    {MOD_64QAM, 6,  qam64_constel}
 };
-static const int MAX_SYMBOL_ELEMENTS = 16;
+static const int MAX_SYMBOL_ELEMENTS = 64;
 static const int MAX_SYMBOL_LENGTH = 10000;
+
+int modulation_get_data_size(Mod *mod)
+{
+    int nBits = modList[mod->modType].bitSize;
+    int symbolSize = mod->numSymbols;
+    return symbolSize * nBits;
+}
+
+int modulation_get_symbol_size(Mod *mod)
+{
+    int nBits = modList[mod->modType].bitSize;
+    return mod->numSymbols;
+}
 
 Mod *modulation_init()
 {
@@ -43,6 +64,11 @@ Mod *modulation_init()
     mod->noiseSNRdB         = 14.0f;
     mod->bitErrorRate       = 0.0f;
     mod->symbolErrorRate    = 0.0f;
+
+    // Normalize constellations
+    for (int i=0; i<8; i++) qam8_constel[i] /= 3.0f;
+    for (int i=0; i<16; i++) qam16_constel[i] /= 3.0f;
+    for (int i=0; i<64; i++) qam64_constel[i] /= 7.0f;
 
     return mod;
 }
