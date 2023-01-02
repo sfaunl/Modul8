@@ -6,6 +6,8 @@ const char* modTypeStr[] = { "BPSK", "QPSK", "8QAM", "16QAM", "64QAM", "256QAM",
 void gui_modulator_main_window(App *app)
 {
     Gui *gui = app->gui;
+    int symbolSize = modulation_get_symbol_size(app->mod);
+    int dataSize = modulation_get_data_size(app->mod);
 
     if(ImGui::BeginMainMenuBar())
     {
@@ -33,7 +35,7 @@ void gui_modulator_main_window(App *app)
     {
         if (ImGui::Button("Continue/Pause"))
             app->mod->running ^= true;
-        // ImGui::SliderInt("symbol/frame", &app->mod->symbolSize, 10, 10000);
+        ImGui::SliderInt("symbol/frame", &app->mod->numSymbols, 10, 10000);
         ImGui::Combo("Modulation", (int*)&app->mod->modType, modTypeStr, IM_ARRAYSIZE(modTypeStr));
         ImGui::SliderFloat("SNR(dB)", &app->mod->noiseSNRdB, 0.0f, 50.0f);
         ImGui::Text("Bit Error Rate = %.6f%%", 100 * app->mod->bitErrorRate);
@@ -41,26 +43,7 @@ void gui_modulator_main_window(App *app)
     }
     ImGui::End();
 
-    int symbolSize = modulation_get_symbol_size(app->mod);
-    int dataSize = modulation_get_data_size(app->mod);
-
-    float x_datad[dataSize];
-    for (int i=0; i<dataSize; i++) x_datad[i] = (float)i;
-
-    float real_arrayrx[symbolSize];
-    float imag_arrayrx[symbolSize];
-    for (int i=0; i<symbolSize; i++) {
-        real_arrayrx[i] = real(app->mod->rxData[i]);
-        imag_arrayrx[i] = imag(app->mod->rxData[i]);
-    }
-    float real_array[symbolSize];
-    float imag_array[symbolSize];
-    for (int i=0; i<symbolSize; i++) {
-        real_array[i] = real(app->mod->modData[i]);
-        imag_array[i] = imag(app->mod->modData[i]);
-    }
-
-    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 10, main_viewport->WorkPos.y + 180), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 10, main_viewport->WorkPos.y + 230), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(350, 350), ImGuiCond_FirstUseEver);
     ImGui::Begin("Constellation Diagram");
     {
@@ -68,14 +51,15 @@ void gui_modulator_main_window(App *app)
             ImPlot::SetupAxisLimits(ImAxis_X1, -2.0f, 2.0f);
             ImPlot::SetupAxisLimits(ImAxis_Y1, -2.0f, 2.0f);
             ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle, 1);
-            ImPlot::PlotScatter("Modulated Data", real_arrayrx, imag_arrayrx, symbolSize);
-            ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle, 1);
+            ImPlot::PlotScatter("Modulated Data", (float*)app->mod->rxData, 
+            ((float*)app->mod->rxData) + 1, symbolSize, 0, 0, sizeof(float) * 2);
             // cmplx* is an array of a structure which has float real and imaginary numbers inside. 
             // memory structure of cmplx is in this way: [RIRIRIRI...]
             // So using stride of two element size and using same pointer twice with one of them with one size of a float offset, we can plot scatter.
             // [RIRIRI], [IRIRI]
+            ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle, 1);
             ImPlot::PlotScatter(modTypeStr[app->mod->modType], (float*)modulation_get_constellation_data(app->mod),
-            ((float*)modulation_get_constellation_data(app->mod))+1, modulation_get_symbol_element_size(app->mod), 0, 0, sizeof(float) * 2);
+            ((float*)modulation_get_constellation_data(app->mod)) + 1, modulation_get_symbol_element_size(app->mod), 0, 0, sizeof(float) * 2);
             ImPlot::EndPlot();
         }
     }
@@ -139,13 +123,13 @@ void gui_modulator_main_window(App *app)
                 if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
                     ImPlot::SetupAxes(NULL,"Modulated",ImPlotAxisFlags_NoLabel | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels,
                     ImPlotAxisFlags_Lock);
-                    ImPlot::PlotLine("Modulated", x_datad, real_array, symbolSize);
+                    ImPlot::PlotLine("Modulated", (float*)app->mod->modData, symbolSize, 1.0, 0.0, 0, sizeof(float)*2);
                     ImPlot::EndPlot();
                 }
                 if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
                     ImPlot::SetupAxisLimits(ImAxis_Y1, -2.0f, 2.0f);
                     ImPlot::SetupAxes(NULL,"Demodulated",ImPlotAxisFlags_None,ImPlotAxisFlags_Lock);
-                    ImPlot::PlotLine("Demodulated", x_datad, real_arrayrx, symbolSize);
+                    ImPlot::PlotLine("Demodulated", (float*)app->mod->rxData, symbolSize, 1.0, 0.0, 0, sizeof(float)*2);
                     ImPlot::EndPlot();
                 }
                 ImPlot::EndSubplots();
@@ -156,18 +140,18 @@ void gui_modulator_main_window(App *app)
             if (ImPlot::BeginPlot("Modulated Data", ImVec2(-1,-1), ImPlotFlags_NoTitle)) {
                 ImPlot::SetupAxisLimits(ImAxis_Y1, -2.0f, 2.0f);
                 ImPlot::SetupAxis(ImAxis_Y1, NULL, ImPlotAxisFlags_Lock);
-                ImPlot::PlotLine("Modulated", x_datad, real_array, symbolSize);
-                ImPlot::PlotLine("Demodulated", x_datad, real_arrayrx, symbolSize);
+                ImPlot::PlotLine("Modulated", (float*)app->mod->modData, symbolSize, 1.0, 0.0, 0, sizeof(float)*2);
+                ImPlot::PlotLine("Demodulated", (float*)app->mod->rxData, symbolSize, 1.0, 0.0, 0, sizeof(float)*2);
                 ImPlot::EndPlot();
             }
         }
     }
     ImGui::End();
 
-    // 3. Show another simple window.
+    // About window
     if (gui->show_about_window)
     {
-        ImGui::Begin("About", &gui->show_about_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+        ImGui::Begin("About", &gui->show_about_window);
         ImGui::Text("Modulation Demo");
         ImGui::Text("sefaunal.com/p/mod_demo");
         ImGui::Text("Build time: " __DATE__ " " __TIME__);
