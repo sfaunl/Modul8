@@ -69,8 +69,8 @@ int modulation_run(void *userArg)
             int dataSize = symbolSize * nBits;
             cmplx *constelList = modList[mod->modType].constel;
             
-            // mod_random_nbits(mod->data, dataSize);
-            mod_nbits(mod->data, dataSize);
+            mod_random_nbits(mod->data, dataSize);
+            // mod_nbits(mod->data, dataSize);
 
             mod_modulate(mod->data, mod->modData, dataSize, nBits, constelList);
 
