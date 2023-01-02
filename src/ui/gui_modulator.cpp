@@ -42,8 +42,6 @@ void gui_modulator_main_window(App *app)
 
     int numSymbols = app->mod->numSymbols;
     int bitLength = numSymbols * (app->mod->modType + 1); // TODO: fix this hack
-    uint8_t x_data[bitLength];
-    for (int i=0; i<bitLength; i++) x_data[i] = i;
     float x_datad[bitLength];
     for (int i=0; i<bitLength; i++) x_datad[i] = (float)i;
 
@@ -88,12 +86,12 @@ void gui_modulator_main_window(App *app)
                 ImPlot::SetupAxisLimits(ImAxis_X1, -1.0, bitLength + 1.0f);
                 ImPlot::SetupAxes(NULL,"Input",ImPlotAxisFlags_NoLabel | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels,
                 ImPlotAxisFlags_NoGridLines | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_Lock);
-                ImPlot::PlotBars("Input", x_data, app->mod->data, bitLength, 0.98, ImPlotBarsFlags_None);
+                    ImPlot::PlotStairs("Input", app->mod->data, bitLength);
                 ImPlot::EndPlot();
             }
             if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
                 ImPlot::SetupAxes(NULL,"Output",0,ImPlotAxisFlags_NoGridLines | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_Lock);
-                ImPlot::PlotBars("Output", x_data, app->mod->demodData, bitLength, 0.98, ImPlotBarsFlags_None);
+                    ImPlot::PlotStairs("Output", app->mod->demodData, bitLength);
                 ImPlot::EndPlot();
             }
             ImPlot::EndSubplots();
