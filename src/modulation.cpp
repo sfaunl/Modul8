@@ -134,10 +134,10 @@ int modulation_run(void *userArg)
     {
         if (app->mod->running)
         {
-            int nBits = modList[mod->modType].bitSize;
-            int symbolSize = mod->numSymbols;
-            int dataSize = symbolSize * nBits;
-            cmplx *constelList = modList[mod->modType].constel;
+            int nBits = modulation_get_symbol_nbits(mod);
+            int symbolSize = modulation_get_symbol_size(mod);
+            int dataSize = modulation_get_data_size(mod);
+            cmplx *constelList = modulation_get_constellation_data(mod);
             
             mod_random_nbits(mod->data, dataSize);
             // mod_nbits(mod->data, dataSize);
