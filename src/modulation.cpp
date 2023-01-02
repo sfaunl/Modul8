@@ -45,8 +45,22 @@ int modulation_get_data_size(Mod *mod)
 
 int modulation_get_symbol_size(Mod *mod)
 {
-    int nBits = modList[mod->modType].bitSize;
     return mod->numSymbols;
+}
+
+int modulation_get_symbol_nbits(Mod *mod)
+{
+    return modList[mod->modType].bitSize;
+}
+
+int modulation_get_symbol_element_size(Mod *mod)
+{
+    return pow(2, modList[mod->modType].bitSize);
+}
+
+cmplx *modulation_get_constellation_data(Mod *mod)
+{
+    return modList[mod->modType].constel;
 }
 
 Mod *modulation_init()
