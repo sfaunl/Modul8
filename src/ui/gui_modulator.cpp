@@ -76,25 +76,40 @@ void gui_modulator_main_window(App *app)
     ImGui::SetNextWindowSize(ImVec2(480, -1), ImGuiCond_FirstUseEver);
     ImGui::Begin("Bit stream");
     {    
-        static float rratios[] = {0.85,1.15};
-        static float cratios[] = {1};
-        if (ImPlot::BeginSubplots("Bit stream", 2, 1, ImVec2(-1,200), 
-        ImPlotSubplotFlags_LinkCols | ImPlotSubplotFlags_LinkAllY, 
-        rratios, cratios)) {
-            if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
+        static bool subplots = false;
+        ImGui::Checkbox("Enable subplots",&subplots);
+        if (subplots)
+        {
+            static float rratios[] = {0.85,1.15};
+            static float cratios[] = {1};
+            if (ImPlot::BeginSubplots("Bit stream", 2, 1, ImVec2(-1,200), 
+            ImPlotSubplotFlags_LinkCols | ImPlotSubplotFlags_LinkAllY, 
+            rratios, cratios)) {
+                if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
+                    ImPlot::SetupAxisLimits(ImAxis_Y1, -0.5f, 1.5f);
+                    ImPlot::SetupAxisLimits(ImAxis_X1, -1.0, bitLength + 1.0f);
+                    ImPlot::SetupAxes(NULL,"Input",ImPlotAxisFlags_NoLabel | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels,
+                    ImPlotAxisFlags_NoGridLines | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_Lock);
+                    ImPlot::PlotStairs("Input", app->mod->data, bitLength);
+                    ImPlot::EndPlot();
+                }
+                if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
+                    ImPlot::SetupAxes(NULL,"Output",0,ImPlotAxisFlags_NoGridLines | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_Lock);
+                    ImPlot::PlotStairs("Output", app->mod->demodData, bitLength);
+                    ImPlot::EndPlot();
+                }
+                ImPlot::EndSubplots();
+            }
+        }
+        else{
+            if (ImPlot::BeginPlot("Bit stream", ImVec2(-1,200))) {
                 ImPlot::SetupAxisLimits(ImAxis_Y1, -0.5f, 1.5f);
                 ImPlot::SetupAxisLimits(ImAxis_X1, -1.0, bitLength + 1.0f);
-                ImPlot::SetupAxes(NULL,"Input",ImPlotAxisFlags_NoLabel | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels,
-                ImPlotAxisFlags_NoGridLines | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_Lock);
-                    ImPlot::PlotStairs("Input", app->mod->data, bitLength);
+                ImPlot::SetupAxis(ImAxis_Y1, NULL, ImPlotAxisFlags_Lock);
+                ImPlot::PlotStairs("Input", app->mod->data, bitLength);
+                ImPlot::PlotStairs("Output", app->mod->demodData, bitLength);
                 ImPlot::EndPlot();
             }
-            if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
-                ImPlot::SetupAxes(NULL,"Output",0,ImPlotAxisFlags_NoGridLines | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_Lock);
-                    ImPlot::PlotStairs("Output", app->mod->demodData, bitLength);
-                ImPlot::EndPlot();
-            }
-            ImPlot::EndSubplots();
         }
     }
     ImGui::End();
