@@ -61,10 +61,10 @@ void gui_modulator_main_window(App *app)
     }
 
     ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 10, main_viewport->WorkPos.y + 180), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(350, -1), ImGuiCond_FirstUseEver);
-    ImGui::Begin("Constellations");
+    ImGui::SetNextWindowSize(ImVec2(350, 350), ImGuiCond_FirstUseEver);
+    ImGui::Begin("Constellation Diagram");
     {
-        if (ImPlot::BeginPlot("Constellations")) { //ImPlotFlags_Equal
+        if (ImPlot::BeginPlot("Constellations", ImVec2(-1, -1), ImPlotFlags_NoTitle)) { 
             ImPlot::SetupAxisLimits(ImAxis_X1, -2.0f, 2.0f);
             ImPlot::SetupAxisLimits(ImAxis_Y1, -2.0f, 2.0f);
             ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle, 1);
@@ -84,7 +84,7 @@ void gui_modulator_main_window(App *app)
     ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 370, main_viewport->WorkPos.y + 30), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(350, -1), ImGuiCond_FirstUseEver);
     ImGui::Begin("Bit stream");
-    {    
+    {
         static bool subplots = false;
         ImGui::Checkbox("Enable subplots",&subplots);
         if (subplots)
@@ -92,7 +92,7 @@ void gui_modulator_main_window(App *app)
             static float rratios[] = {0.85,1.15};
             static float cratios[] = {1};
             if (ImPlot::BeginSubplots("Bit stream", 2, 1, ImVec2(-1,200), 
-            ImPlotSubplotFlags_LinkCols | ImPlotSubplotFlags_LinkAllY, 
+            ImPlotFlags_NoTitle | ImPlotSubplotFlags_LinkCols | ImPlotSubplotFlags_LinkAllY, 
             rratios, cratios)) {
                 if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
                     ImPlot::SetupAxisLimits(ImAxis_Y1, -0.5f, 1.5f);
@@ -111,7 +111,7 @@ void gui_modulator_main_window(App *app)
             }
         }
         else{
-            if (ImPlot::BeginPlot("Bit stream", ImVec2(-1,200))) {
+            if (ImPlot::BeginPlot("Bit stream", ImVec2(-1,200), ImPlotFlags_NoTitle)) {
                 ImPlot::SetupAxisLimits(ImAxis_Y1, -0.5f, 1.5f);
                 ImPlot::SetupAxisLimits(ImAxis_X1, -1.0, dataSize + 1.0f);
                 ImPlot::SetupAxis(ImAxis_Y1, NULL, ImPlotAxisFlags_Lock);
@@ -134,7 +134,7 @@ void gui_modulator_main_window(App *app)
             static float rratios[] = {0.85,1.15};
             static float cratios[] = {1};
             if (ImPlot::BeginSubplots("Modulated Data", 2, 1, ImVec2(-1,200), 
-            ImPlotSubplotFlags_LinkCols | ImPlotSubplotFlags_LinkAllY, 
+            ImPlotFlags_NoTitle | ImPlotSubplotFlags_LinkCols | ImPlotSubplotFlags_LinkAllY, 
             rratios, cratios)) {
                 if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
                     ImPlot::SetupAxes(NULL,"Modulated",ImPlotAxisFlags_NoLabel | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels,
@@ -153,7 +153,7 @@ void gui_modulator_main_window(App *app)
         }
         else
         {
-            if (ImPlot::BeginPlot("Modulated Data", ImVec2(-1,200))) {
+            if (ImPlot::BeginPlot("Modulated Data", ImVec2(-1,200), ImPlotFlags_NoTitle)) {
                 ImPlot::SetupAxisLimits(ImAxis_Y1, -2.0f, 2.0f);
                 ImPlot::SetupAxis(ImAxis_Y1, NULL, ImPlotAxisFlags_Lock);
                 ImPlot::PlotLine("Modulated", x_datad, real_array, symbolSize);
