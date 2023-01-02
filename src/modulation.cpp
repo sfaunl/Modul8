@@ -19,6 +19,10 @@ cmplx qam64_constel[64] = { {-7,7},  {-5,7},  {-3,7},  {-1,7},  {1,7},  {3,7},  
                             {-7,-3}, {-5,-3}, {-3,-3}, {-1,-3}, {1,-3}, {3,-3}, {5,-3}, {7,-3}, 
                             {-7,-5}, {-5,-5}, {-3,-5}, {-1,-5}, {1,-5}, {3,-5}, {5,-5}, {7,-5},
                             {-7,-7}, {-5,-7}, {-3,-7}, {-1,-7}, {1,-7}, {3,-7}, {5,-7}, {7,-7}};
+cmplx qam256_constel[256] ={{-15,15},  }; 
+cmplx qam1024_constel[1024] ={{-31,31}, }; 
+cmplx qam4096_constel[4096] ={{-63,63}, }; 
+
 
 typedef struct{
     ModType type;
@@ -31,10 +35,26 @@ Modulation modList[] = {
     {MOD_QPSK,  2,  qpsk_constel},
     {MOD_8QAM,  3,  qam8_constel},
     {MOD_16QAM, 4,  qam16_constel},
-    {MOD_64QAM, 6,  qam64_constel}
+    {MOD_64QAM, 6,  qam64_constel},
+    {MOD_256QAM, 8,  qam256_constel},
+    {MOD_1024QAM, 10,  qam1024_constel},
+    {MOD_4096QAM, 12,  qam4096_constel}
 };
-static const int MAX_SYMBOL_ELEMENTS = 64;
-static const int MAX_SYMBOL_LENGTH = 10000;
+static const int MAX_SYMBOL_ELEMENTS = 4096;
+static const int MAX_SYMBOL_LENGTH = 100000;
+
+void modulation_calculate_qam(cmplx *constel, int nBits)
+{
+    int k = sqrt(pow(2,nBits));
+    for (int j=0; j<k; j++)
+    {
+        for (int i=0; i<k; i++)
+        {
+            constel[j * k + i] =  cmplx(-pow(2, nBits / 2) + i * 2 + 1,
+                                            -pow(2, nBits / 2) + j * 2 + 1);
+        }
+    }
+}
 
 int modulation_get_data_size(Mod *mod)
 {
@@ -79,10 +99,19 @@ Mod *modulation_init()
     mod->bitErrorRate       = 0.0f;
     mod->symbolErrorRate    = 0.0f;
 
+    // Calculate constellations
+    modulation_calculate_qam(qam16_constel, 4);
+    modulation_calculate_qam(qam64_constel, 6);
+    modulation_calculate_qam(qam256_constel, 8);
+    modulation_calculate_qam(qam1024_constel, 10);
+    modulation_calculate_qam(qam4096_constel, 12);
     // Normalize constellations
     for (int i=0; i<8; i++) qam8_constel[i] /= 3.0f;
     for (int i=0; i<16; i++) qam16_constel[i] /= 3.0f;
     for (int i=0; i<64; i++) qam64_constel[i] /= 7.0f;
+    for (int i=0; i<256; i++) qam256_constel[i] /= 15.0f;
+    for (int i=0; i<1024; i++) qam1024_constel[i] /= 31.0f;
+    for (int i=0; i<4096; i++) qam4096_constel[i] /= 63.0f;
 
     return mod;
 }

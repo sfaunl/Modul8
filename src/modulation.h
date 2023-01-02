@@ -11,7 +11,10 @@ typedef enum{
     MOD_QPSK,
     MOD_8QAM,
     MOD_16QAM,
-    MOD_64QAM
+    MOD_64QAM,
+    MOD_256QAM,
+    MOD_1024QAM,
+    MOD_4096QAM
 } ModType;
 
 typedef struct{
