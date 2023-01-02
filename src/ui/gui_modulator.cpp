@@ -82,7 +82,7 @@ void gui_modulator_main_window(App *app)
     ImGui::End();
 
     ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 370, main_viewport->WorkPos.y + 30), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(350, -1), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(350, 250), ImGuiCond_FirstUseEver);
     ImGui::Begin("Bit stream");
     {
         static bool subplots = false;
@@ -91,7 +91,7 @@ void gui_modulator_main_window(App *app)
         {
             static float rratios[] = {0.85,1.15};
             static float cratios[] = {1};
-            if (ImPlot::BeginSubplots("Bit stream", 2, 1, ImVec2(-1,200), 
+            if (ImPlot::BeginSubplots("Bit stream", 2, 1, ImVec2(-1,-1), 
             ImPlotFlags_NoTitle | ImPlotSubplotFlags_LinkCols | ImPlotSubplotFlags_LinkAllY, 
             rratios, cratios)) {
                 if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
@@ -111,7 +111,7 @@ void gui_modulator_main_window(App *app)
             }
         }
         else{
-            if (ImPlot::BeginPlot("Bit stream", ImVec2(-1,200), ImPlotFlags_NoTitle)) {
+            if (ImPlot::BeginPlot("Bit stream", ImVec2(-1,-1), ImPlotFlags_NoTitle)) {
                 ImPlot::SetupAxisLimits(ImAxis_Y1, -0.5f, 1.5f);
                 ImPlot::SetupAxisLimits(ImAxis_X1, -1.0, dataSize + 1.0f);
                 ImPlot::SetupAxis(ImAxis_Y1, NULL, ImPlotAxisFlags_Lock);
@@ -124,7 +124,7 @@ void gui_modulator_main_window(App *app)
     ImGui::End();
 
     ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 370, main_viewport->WorkPos.y + 300), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(350, -1), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(350, 250), ImGuiCond_FirstUseEver);
     ImGui::Begin("Modulated Data");
     {   
         static bool subplots = false;
@@ -133,7 +133,7 @@ void gui_modulator_main_window(App *app)
         {
             static float rratios[] = {0.85,1.15};
             static float cratios[] = {1};
-            if (ImPlot::BeginSubplots("Modulated Data", 2, 1, ImVec2(-1,200), 
+            if (ImPlot::BeginSubplots("Modulated Data", 2, 1, ImVec2(-1,-1), 
             ImPlotFlags_NoTitle | ImPlotSubplotFlags_LinkCols | ImPlotSubplotFlags_LinkAllY, 
             rratios, cratios)) {
                 if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
@@ -153,7 +153,7 @@ void gui_modulator_main_window(App *app)
         }
         else
         {
-            if (ImPlot::BeginPlot("Modulated Data", ImVec2(-1,200), ImPlotFlags_NoTitle)) {
+            if (ImPlot::BeginPlot("Modulated Data", ImVec2(-1,-1), ImPlotFlags_NoTitle)) {
                 ImPlot::SetupAxisLimits(ImAxis_Y1, -2.0f, 2.0f);
                 ImPlot::SetupAxis(ImAxis_Y1, NULL, ImPlotAxisFlags_Lock);
                 ImPlot::PlotLine("Modulated", x_datad, real_array, symbolSize);
