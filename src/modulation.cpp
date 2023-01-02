@@ -25,18 +25,19 @@ Modulation modList[] = {
     {MOD_8QAM,  3,  qam8_constel},
     {MOD_16QAM, 4,  qam16_constel}
 };
-static const int MAX_SYMBOLSIZE = 16;
+static const int MAX_SYMBOL_ELEMENTS = 16;
+static const int MAX_SYMBOL_LENGTH = 10000;
 
 Mod *modulation_init()
 {
     Mod *mod = new Mod();
 
     mod->running    = true;
-    mod->numSymbols = 1000;
-    mod->data       = new uint8_t[mod->numSymbols * MAX_SYMBOLSIZE];
-    mod->modData    = new cmplx[mod->numSymbols];
-    mod->rxData     = new cmplx[mod->numSymbols];
-    mod->demodData  = new uint8_t[mod->numSymbols * MAX_SYMBOLSIZE];
+    mod->numSymbols = 250;
+    mod->data       = new uint8_t[MAX_SYMBOL_LENGTH * MAX_SYMBOL_ELEMENTS];
+    mod->modData    = new cmplx[MAX_SYMBOL_LENGTH];
+    mod->rxData     = new cmplx[MAX_SYMBOL_LENGTH];
+    mod->demodData  = new uint8_t[MAX_SYMBOL_LENGTH * MAX_SYMBOL_ELEMENTS];
     mod->modType    = MOD_16QAM;
 
     mod->noiseSNRdB         = 14.0f;
