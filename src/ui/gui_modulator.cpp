@@ -58,7 +58,7 @@ void gui_modulator_main_window(App *app)
         imag_array[i] = imag(app->mod->modData[i]);
     }
 
-    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 10, main_viewport->WorkPos.y + 160), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 10, main_viewport->WorkPos.y + 180), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(480, -1), ImGuiCond_FirstUseEver);
     ImGui::Begin("Constellations");
     {
@@ -114,7 +114,7 @@ void gui_modulator_main_window(App *app)
     }
     ImGui::End();
 
-    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 500, main_viewport->WorkPos.y + 280), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 500, main_viewport->WorkPos.y + 300), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(480, -1), ImGuiCond_FirstUseEver);
     ImGui::Begin("Modulated Data");
     {   
