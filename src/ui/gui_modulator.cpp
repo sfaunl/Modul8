@@ -54,7 +54,7 @@ void gui_modulator_main_window(App *app)
         if (ImPlot::BeginPlot("Constellations", ImVec2(-1, -1), ImPlotFlags_NoTitle)) { 
             ImPlot::SetupAxisLimits(ImAxis_X1, -1.5f, 1.5f);
             ImPlot::SetupAxisLimits(ImAxis_Y1, -1.5f, 1.5f);
-            ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle, 1);
+            ImPlot::SetNextMarkerStyle(ImPlotMarker_Square, 1);
             // cmplx* is an array of a structure which has float real and imaginary numbers inside. 
             // memory structure of cmplx is in this way: [RIRIRIRI...]
             // So using stride of two element size and using same pointer twice with one of them with one size of a float offset, we can plot scatter.
@@ -66,7 +66,7 @@ void gui_modulator_main_window(App *app)
 
             if (constel)
             {
-            ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle, 1);
+                ImPlot::SetNextMarkerStyle(ImPlotMarker_Plus, 3);
             ImPlot::PlotScatter(modTypeStr[app->mod->modType], (float*)modulation_get_constellation_data(app->mod),
             ((float*)modulation_get_constellation_data(app->mod)) + 1, modulation_get_symbol_element_size(app->mod), 0, 0, sizeof(float) * 2);
             }
