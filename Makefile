@@ -24,10 +24,12 @@ LIBS += -lm -lGL
 
 CXXFLAGS = -std=c++11 -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends
 CXXFLAGS += `sdl2-config --cflags`
-CXXFLAGS += -g -Wall -Wextra -Wformat -Wformat -pedantic
+CXXFLAGS += -Wall -Wextra -Wformat -Wformat -pedantic
+CXXFLAGS += -s -ffunction-sections -fdata-sections
 CXXFLAGS += -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends
 CXXFLAGS += -I$(IMPLOT_DIR)
 CFLAGS = $(CXXFLAGS)
+LDFLAGS = "-Wl,--gc-sections"
 
 x86_debug:
 	mkdir -p $(BUILD_PRE_X)
@@ -35,7 +37,7 @@ x86_debug:
 
 x86_release:
 	mkdir -p $(BUILD_PRE_X)
-	g++ $(SRC) -O3 $(CFLAGS) $(X86DEFINES) $(LIBS) -o $(BUILD_PRE_X)/$(EXE)
+	g++ $(SRC) -Os $(CFLAGS) $(X86DEFINES) $(LIBS) -o $(BUILD_PRE_X)/$(EXE)
 
 wasm:
 	mkdir -p $(BUILD_PRE_W)
