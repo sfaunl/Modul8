@@ -163,7 +163,7 @@ void gui_modulator_main_window(App *app)
     {
         ImGui::Begin("About", &gui->show_about_window);
         ImGui::Text("Modulation Demo");
-        ImGui::Text("sefaunal.com/p/mod_demo");
+        ImGui::Text("sefaunal.com/p/modulance");
         ImGui::Text("Build time: " __DATE__ " " __TIME__);
         
         if (ImGui::Button("Close"))
