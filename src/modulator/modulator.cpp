@@ -127,28 +127,25 @@ void mod_modulate(uint8_t *inBits, cmplx *out, int inBitsLength, int symbolNBits
 
 void mod_demodulate(cmplx *symbols, uint8_t *outBits, int outBitsLength, int symbolNBits, cmplx *constellationList)
 {
-    for (int b = 0; b < outBitsLength / symbolNBits; b++) {
+    int numSymbols = outBitsLength / symbolNBits;
         int constElements = pow(2,symbolNBits);
-        float dist[constElements];
-        for (int s = 0; s < constElements; s++)
+    for (int sym = 0; sym < numSymbols; sym++) {
+        float minDist = 999.0f; // TODO: replace with float_max
+        uint16_t symbol = 0;
+        for (int i = 0; i < constElements; i++)
         {
-            dist[s] = abs(constellationList[s] - symbols[b]);
-        }
-
-        int symbol = 0;
-        float minDist = dist[0];
-        for(int i = 1; i < constElements; i++){
-            if(minDist > dist[i])
+            float dist = abs(constellationList[i] - symbols[sym]);
+            if (dist < minDist)
             { 
-                minDist = dist[i];
+                minDist = dist;
                 symbol = i;
             }
         }
 
-        for(int bit=0; bit<symbolNBits; bit++)
+        for(int bit = 0; bit < symbolNBits; bit++)
         {
             symbol <<= 1;
-            outBits[b * symbolNBits + bit] = (symbol & (1 << symbolNBits)) > 0;
+            outBits[sym * symbolNBits + bit] = (symbol & (1 << symbolNBits)) > 0;
         }
     }
 }
