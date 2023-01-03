@@ -51,7 +51,7 @@ void gui_modulator_main_window(App *app)
     {
         static bool constel = false;
         ImGui::Checkbox("Show constellations", &constel);
-        if (ImPlot::BeginPlot("Constellations", ImVec2(-1, -1), ImPlotFlags_NoTitle)) { 
+        if (ImPlot::BeginPlot("Constellations", ImVec2(-1, -1), ImPlotFlags_NoTitle | ImPlotFlags_NoLegend)) { 
             ImPlot::SetupAxisLimits(ImAxis_X1, -1.5f, 1.5f);
             ImPlot::SetupAxisLimits(ImAxis_Y1, -1.5f, 1.5f);
             ImPlot::SetNextMarkerStyle(ImPlotMarker_Square, 1);
@@ -67,8 +67,8 @@ void gui_modulator_main_window(App *app)
             if (constel)
             {
                 ImPlot::SetNextMarkerStyle(ImPlotMarker_Plus, 3);
-            ImPlot::PlotScatter(modTypeStr[app->mod->modType], (float*)modulation_get_constellation_data(app->mod),
-            ((float*)modulation_get_constellation_data(app->mod)) + 1, modulation_get_symbol_element_size(app->mod), 0, 0, sizeof(float) * 2);
+                ImPlot::PlotScatter(modTypeStr[app->mod->modType], (float*)modulation_get_constellation_data(app->mod),
+                ((float*)modulation_get_constellation_data(app->mod)) + 1, modulation_get_symbol_element_size(app->mod), 0, 0, sizeof(float) * 2);
             }
             ImPlot::EndPlot();
         }
