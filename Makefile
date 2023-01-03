@@ -37,16 +37,16 @@ x86_debug:
 
 x86_release:
 	mkdir -p $(BUILD_PRE_X)
-	g++ $(SRC) -Os $(CFLAGS) $(X86DEFINES) $(LIBS) -o $(BUILD_PRE_X)/$(EXE)
+	g++ $(SRC) -Oz $(CFLAGS) $(X86DEFINES) $(LIBS) -o $(BUILD_PRE_X)/$(EXE)
 
 wasm:
 	mkdir -p $(BUILD_PRE_W)
 	cp $(TEMPLATE_PRE)/index.htm $(BUILD_PRE_W)/.
-	em++ $(SRC) $(CFLAGS) $(WASMDEFINES) $(LIBS) -O3 \
+	em++ $(SRC) $(CFLAGS) $(WASMDEFINES) $(LIBS) -Oz -v \
 	-s WASM=1 \
 	-s USE_SDL=2 \
-	-s DISABLE_EXCEPTION_CATCHING=1 \
-	-s ALLOW_MEMORY_GROWTH=1 -s NO_EXIT_RUNTIME=0 -s ASSERTIONS=1 \
+	-s FILESYSTEM=0 \
+	-s ASSERTIONS=1 \
 	-s ASYNCIFY \
 	-o $(BUILD_PRE_W)/$(EXE).js
 
