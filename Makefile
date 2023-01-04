@@ -40,6 +40,19 @@ x86_release:
 	mkdir -p $(BUILD_PRE_X)
 	g++ $(SRC) -Oz $(CFLAGS) $(X86DEFINES) $(LIBS) -o $(BUILD_PRE_X)/$(EXE)
 
+wasm_debug:
+	mkdir -p $(BUILD_PRE_W)
+	cp $(TEMPLATE_PRE)/index.htm $(BUILD_PRE_W)/.
+	em++ $(SRC) $(CFLAGS) $(WASMDEFINES) $(LIBS) -Os -g -v \
+	-s WASM=1 \
+	-s USE_SDL=2 \
+	-s ALLOW_MEMORY_GROWTH=1 \
+	-s ASSERTIONS=2 \
+  	-fsanitize=address \
+	-s ASYNCIFY \
+	--preload-file assets/wav/taunt.wav \
+	-o $(BUILD_PRE_W)/$(EXE).js
+
 wasm:
 	mkdir -p $(BUILD_PRE_W)
 	cp $(TEMPLATE_PRE)/index.htm $(BUILD_PRE_W)/.
