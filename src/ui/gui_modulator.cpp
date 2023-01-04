@@ -35,7 +35,7 @@ void gui_modulator_main_window(App *app)
     {
         if (ImGui::Button("Continue/Pause"))
             app->mod->running ^= true;
-        ImGui::SliderInt("symbol/frame", &app->mod->numSymbols, 10, 10000);
+        ImGui::SliderInt("symbol/frame", &app->mod->numSymbols, 10, 1000);
         ImGui::Combo("Modulation", (int*)&app->mod->modType, modTypeStr, IM_ARRAYSIZE(modTypeStr));
         ImGui::SliderFloat("SNR(dB)", &app->mod->noiseSNRdB, 0.0f, 50.0f);
         ImGui::Text("Bit Rate = %.2f kbps", dataSize * ImGui::GetIO().Framerate / (1024.0));
