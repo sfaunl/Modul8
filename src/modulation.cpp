@@ -230,7 +230,7 @@ int modulation_run(void *userArg)
             switch(app->mod->input)
             {
                 case MODINPUT_RANDOM:
-                    modulate_random(app, 1024);
+                    modulate_random(app, modulation_get_data_size(app->mod));
                     break;
                 case MODINPUT_AUDIO:
                     modulate_audio(app, app->audio->wavBuffer, app->audio->wavBuffer2, app->audio->wavLength);
