@@ -9,11 +9,12 @@ IMGUI_DIR = src/ui/imgui
 IMPLOT_DIR = src/ui/implot
 SRC = src/main.cpp \
 src/app.cpp \
+src/modulation.cpp \
+src/audio.cpp \
 src/ui/imgui_renderer.cpp \
 src/ui/gui.cpp \
-src/ui/gui_modulator.cpp \
-src/modulation.cpp \
-src/modulator/modulator.cpp
+src/ui/gui_modulator.cpp 
+SRC += src/modulator/modulator.cpp
 SRC += $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_demo.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
 SRC += $(IMGUI_DIR)/backends/imgui_impl_sdl.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
 SRC += $(IMPLOT_DIR)/implot.cpp $(IMPLOT_DIR)/implot_items.cpp
@@ -45,11 +46,10 @@ wasm:
 	em++ $(SRC) $(CFLAGS) $(WASMDEFINES) $(LIBS) -Oz -v \
 	-s WASM=1 \
 	-s USE_SDL=2 \
-	-s FILESYSTEM=0 \
-	-s DISABLE_EXCEPTION_CATCHING=1 \
 	-s ALLOW_MEMORY_GROWTH=1 \
 	-s ASSERTIONS=1 \
 	-s ASYNCIFY \
+	--preload-file assets/wav/taunt.wav \
 	-o $(BUILD_PRE_W)/$(EXE).js
 
 clean:

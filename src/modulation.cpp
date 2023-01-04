@@ -132,33 +132,110 @@ void mod_nbits(uint8_t *bits, int length)
     }
 }
 
+void mod_u8_to_bitstream(uint8_t *dataIn, int size, uint8_t *bitsOut)
+{   
+    for (int i=0; i<size; i++)
+    {
+        uint8_t buf = dataIn[i];
+        for (int j=0; j<8; j++)
+        {
+            bitsOut[i*8+j] = buf & 0x01;
+            buf >>= 1;
+        }
+    }
+}
+
+void mod_bitstream_to_u8(uint8_t *bitsIn, uint8_t *dataOut, int size)
+{   
+    for (int i=0; i<size; i++)
+    {
+        uint8_t buf = 0;
+        for (int j=0; j<8; j++)
+        {
+            buf |= (bitsIn[i*8+j] << j);
+            // buf <<= 1;
+        }
+        dataOut[i] = buf;
+    }
+}
+
+void modulate_bits(void *arg, uint8_t *bitsIn, uint8_t *bitsOut, int size)
+{
+    Mod *mod = (Mod*)arg;
+    int nBits = modulation_get_symbol_nbits(mod);
+    cmplx *constelList = modulation_get_constellation_data(mod);
+    int symbolSize = size / nBits;
+    mod->numSymbols = symbolSize;
+
+    mod_modulate(bitsIn, mod->modData, size, nBits, constelList);
+    mod_gaussian_channel(mod->modData, mod->rxData, symbolSize, mod->noiseSNRdB);
+    mod_demodulate(mod->rxData, bitsOut, size, nBits, constelList);
+
+    float SER = mod_symbol_error_rate(bitsIn, bitsOut, size, nBits);
+    float BER = mod_bit_error_rate(bitsIn, bitsOut, size);
+
+    mod->symbolErrorRate = (mod->symbolErrorRate * 0.8 + SER * 0.2);
+    mod->bitErrorRate = (mod->bitErrorRate * 0.8 + BER * 0.2);
+}
+
+void modulate_bytes(void *arg, uint8_t *dataIn, uint8_t *dataOut, int sizeBytes)
+{
+    Mod *mod = (Mod*)arg;
+    int size = sizeBytes * 8;
+
+    mod_u8_to_bitstream(dataIn, sizeBytes, mod->data);
+    modulate_bits(arg, mod->data, mod->demodData, size);
+    mod_bitstream_to_u8(mod->demodData, dataOut, sizeBytes);
+}
+
+void modulate_audio(void *arg, uint8_t *dataIn, uint8_t *dataOut, int size)
+{
+    App* app = (App*)arg;
+    static int index = 0;
+    static int chunkSize = 512; // bytes
+
+    // Wait for the audio buffer to get under a threshold to synchronize the audio
+    // TODO: Find a smart way to set the threshold
+    if (SDL_GetQueuedAudioSize(app->audio->deviceId) < chunkSize * 10)
+    {
+        modulate_bytes(app->mod, &dataIn[index], &dataOut[index], chunkSize);
+
+        audio_append(app->audio, &dataOut[index], chunkSize);
+        index += chunkSize;
+
+        if (index + chunkSize  > size)
+        {
+            index = 0;
+        }
+    }
+}
+
+void modulate_random(void *arg, int size)
+{
+    App* app = (App*)arg;
+    Mod *mod = app->mod;
+
+    mod_random_nbits(mod->data, size);
+    modulate_bits(mod, mod->data, mod->demodData, size);
+}
+
 int modulation_run(void *userArg)
 {
     App *app = (App*)userArg;
-    Mod *mod = app->mod;
+
     if(app->keepRunning)
     {
         if (app->mod->running)
         {
-            int nBits = modulation_get_symbol_nbits(mod);
-            int symbolSize = modulation_get_symbol_size(mod);
-            int dataSize = modulation_get_data_size(mod);
-            cmplx *constelList = modulation_get_constellation_data(mod);
-            
-            mod_random_nbits(mod->data, dataSize);
-            // mod_nbits(mod->data, dataSize);
-
-            mod_modulate(mod->data, mod->modData, dataSize, nBits, constelList);
-
-            mod_gaussian_channel(mod->modData, mod->rxData, symbolSize, mod->noiseSNRdB);
-
-            mod_demodulate(mod->rxData, mod->demodData, dataSize, nBits, constelList);
-
-            float SER = mod_symbol_error_rate(mod->data, mod->demodData, dataSize, nBits);
-            float BER = mod_bit_error_rate(mod->data, mod->demodData, dataSize);
-
-            mod->symbolErrorRate = (mod->symbolErrorRate * 0.8 + SER * 0.2);
-            mod->bitErrorRate = (mod->bitErrorRate * 0.8 + BER * 0.2);
+            switch(app->mod->input)
+            {
+                case MODINPUT_RANDOM:
+                    modulate_random(app, 1024);
+                    break;
+                case MODINPUT_AUDIO:
+                    modulate_audio(app, app->audio->wavBuffer, app->audio->wavBuffer2, app->audio->wavLength);
+                    break;
+            }
         }
     }
     else

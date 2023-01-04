@@ -8,6 +8,7 @@ App* app_init()
 
     app->gui = gui_init();
     app->mod = modulation_init();
+    app->audio = audio_init();
 
     return app;
 }

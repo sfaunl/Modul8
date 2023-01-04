@@ -19,6 +19,11 @@ typedef enum{
     MOD_4096QAM
 } ModType;
 
+typedef enum{
+    MODINPUT_RANDOM,
+    MODINPUT_AUDIO
+} ModInput;
+
 typedef struct{
     bool    running;
     int     numSymbols;
@@ -31,8 +36,8 @@ typedef struct{
     float   bitErrorRate;
     float   symbolErrorRate;
     ModType modType;
-    // char    *modTypeStr;
 
+    ModInput input;      // inputType
 } Mod;
 
 int modulation_run(void *userArg);

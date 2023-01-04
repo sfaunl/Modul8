@@ -2,6 +2,7 @@
 
 // TODO: move to modulator.h
 const char* modTypeStr[] = {"ASK", "BPSK", "QPSK", "8PSK", "8QAM", "16QAM", "64QAM", "256QAM", "1024QAM", "4096QAM"};
+const char* modInputStr[] = {"RANDOM", "TAUNT.WAV"};
 
 void gui_modulator_main_window(App *app)
 {
@@ -35,6 +36,7 @@ void gui_modulator_main_window(App *app)
     {
         if (ImGui::Button("Continue/Pause"))
             app->mod->running ^= true;
+        ImGui::Combo("Input", (int*)&app->mod->input, modInputStr, IM_ARRAYSIZE(modInputStr));
         ImGui::SliderInt("symbol/frame", &app->mod->numSymbols, 10, 1000);
         ImGui::Combo("Modulation", (int*)&app->mod->modType, modTypeStr, IM_ARRAYSIZE(modTypeStr));
         ImGui::SliderFloat("SNR(dB)", &app->mod->noiseSNRdB, 0.0f, 50.0f);
@@ -45,7 +47,7 @@ void gui_modulator_main_window(App *app)
     }
     ImGui::End();
 
-    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 10, main_viewport->WorkPos.y + 230), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 10, main_viewport->WorkPos.y + 270), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(350, 350), ImGuiCond_FirstUseEver);
     ImGui::Begin("Constellation Diagram");
     {
