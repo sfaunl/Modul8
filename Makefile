@@ -46,6 +46,8 @@ wasm:
 	-s WASM=1 \
 	-s USE_SDL=2 \
 	-s FILESYSTEM=0 \
+	-s DISABLE_EXCEPTION_CATCHING=1 \
+	-s ALLOW_MEMORY_GROWTH=1 \
 	-s ASSERTIONS=1 \
 	-s ASYNCIFY \
 	-o $(BUILD_PRE_W)/$(EXE).js
