@@ -11,9 +11,9 @@ Audio *audio_init()
     Audio *audio = new Audio();
 
 #ifdef __EMSCRIPTEN__
-    char *wavFile = "assets/wav/taunt.wav";
+    const char *wavFile = "assets/wav/taunt.wav";
 #else
-    char *wavFile = "taunt.wav";
+    const char *wavFile = "taunt.wav";
 #endif
     if (SDL_LoadWAV(wavFile, &audio->wavSpec, &audio->wavBuffer, &audio->wavLength) == NULL) 
     {

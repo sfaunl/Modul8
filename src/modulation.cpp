@@ -196,7 +196,7 @@ void modulate_audio(void *arg, uint8_t *dataIn, uint8_t *dataOut, int size)
 
     // Wait for the audio buffer to get under a threshold to synchronize the audio
     // TODO: Find a smart way to set the threshold
-    if (SDL_GetQueuedAudioSize(app->audio->deviceId) < chunkSize * 10)
+    if (SDL_GetQueuedAudioSize(app->audio->deviceId) < (Uint32)chunkSize * 10)
     {
         modulate_bytes(app->mod, &dataIn[index], &dataOut[index], chunkSize);
 
