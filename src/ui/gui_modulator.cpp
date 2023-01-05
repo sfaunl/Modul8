@@ -171,15 +171,19 @@ void gui_modulator_main_window(App *app)
     ImGui::End();
 
     // About window
+    ImGui::SetNextWindowSize(ImVec2(600, 180), ImGuiCond_FirstUseEver);
     if (gui->show_about_window)
     {
         if (darkMode) ImGui::StyleColorsLight();
         else ImGui::StyleColorsDark();
         ImGui::Begin("About", &gui->show_about_window);
-        ImGui::Text("Modulation Demo");
-        ImGui::Text("sefaunal.com/p/modulance");
+        ImGui::Text("Modulation Demo \tsefaunal.com/p/modul8");
         ImGui::Text("Build time: " __DATE__ " " __TIME__);
-        
+        ImGui::Text("_____________________");
+        ImGui::Text("Libraries:");
+        ImGui::Text(" Dear ImGui: Bloat-free Graphical User interface for C++ with minimal dependencies.");
+        ImGui::Text(" ImPlot:     Immediate Mode Plotting.");
+        ImGui::Text(" ");
         if (ImGui::Button("Close"))
             gui->show_about_window = false;
         ImGui::End();
