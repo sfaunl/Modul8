@@ -34,7 +34,7 @@ LDFLAGS = "-Wl,--gc-sections"
 
 x86_debug:
 	mkdir -p $(BUILD_PRE_X)
-	g++ $(SRC) -g $(CFLAGS) $(X86DEFINES) $(LIBS) -o $(BUILD_PRE_X)/$(EXE) 
+	g++ $(SRC) -g -DDEBUG $(CFLAGS) $(X86DEFINES) $(LIBS) -o $(BUILD_PRE_X)/$(EXE) 
 
 x86_release:
 	mkdir -p $(BUILD_PRE_X)
@@ -43,7 +43,7 @@ x86_release:
 wasm_debug:
 	mkdir -p $(BUILD_PRE_W)
 	cp $(TEMPLATE_PRE)/index.htm $(BUILD_PRE_W)/.
-	em++ $(SRC) $(CFLAGS) $(WASMDEFINES) $(LIBS) -Os -g -v \
+	em++ $(SRC) $(CFLAGS) $(WASMDEFINES) $(LIBS) -Os -g -v -DDEBUG \
 	-s WASM=1 \
 	-s USE_SDL=2 \
 	-s ALLOW_MEMORY_GROWTH=1 \

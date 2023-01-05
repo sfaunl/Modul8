@@ -22,9 +22,12 @@ void gui_modulator_main_window(App *app)
         if(ImGui::MenuItem("About")){
             gui->show_about_window = true;
         }
+#ifdef DEBUG
         ImGui::SameLine(ImGui::GetWindowWidth() - 250);
         if (ImGui::Button("Demo Window"))
             gui->show_demo_window = true;
+#endif //DEBUG
+        ImGui::SameLine(ImGui::GetWindowWidth() - 150);
         ImGui::Text("%.2f FPS (%.2f ms)", ImGui::GetIO().Framerate, 1000.0f / ImGui::GetIO().Framerate);
     ImGui::EndMainMenuBar();
     }
