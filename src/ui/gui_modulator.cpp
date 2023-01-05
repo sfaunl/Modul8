@@ -58,7 +58,7 @@ void gui_modulator_main_window(App *app)
             app->mod->running ^= true;
         ImGui::Combo("Input", (int*)&app->mod->input, modInputStr, IM_ARRAYSIZE(modInputStr));
         if (app->mod->input == MODINPUT_AUDIO) ImGui::BeginDisabled(true);
-        ImGui::SliderInt("symbol/frame", &app->mod->numSymbols, 10, 1000);
+        ImGui::SliderInt("symbol/frame", &app->mod->numSymbols, 10, 10000);
         if (app->mod->input == MODINPUT_AUDIO) ImGui::EndDisabled();
         ImGui::Combo("Modulation", (int*)&app->mod->modType, modTypeStr, IM_ARRAYSIZE(modTypeStr));
         ImGui::SliderFloat("SNR(dB)", &app->mod->noiseSNRdB, 0.0f, 50.0f);
