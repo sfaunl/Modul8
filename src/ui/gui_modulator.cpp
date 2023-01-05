@@ -23,6 +23,19 @@ void gui_modulator_main_window(App *app)
             }
             ImGui::EndMenu();
         }
+        if (ImGui::BeginMenu("Window"))
+        {
+            if (ImGui::MenuItem("Constellations")) {
+                gui->show_const_window = true;
+            }
+            if (ImGui::MenuItem("Bit Stream")) {
+                gui->show_bitstream_window = true;
+            }
+            if (ImGui::MenuItem("Modulated Data")) {
+                gui->show_moddata_window = true;
+            }
+            ImGui::EndMenu();
+        }
         if(ImGui::MenuItem("About")){
             gui->show_about_window = true;
         }
@@ -56,125 +69,131 @@ void gui_modulator_main_window(App *app)
     }
     ImGui::End();
 
-    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 10, main_viewport->WorkPos.y + 270), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(350, 350), ImGuiCond_FirstUseEver);
-    ImGui::Begin("Constellation Diagram");
-    {
-        static bool constel = false;
-        ImGui::Checkbox("Show constellations", &constel);
-        if (ImPlot::BeginPlot("Constellations", ImVec2(-1, -1), ImPlotFlags_NoTitle | ImPlotFlags_NoLegend)) { 
-            ImPlot::SetupAxisLimits(ImAxis_X1, -1.5f, 1.5f);
-            ImPlot::SetupAxisLimits(ImAxis_Y1, -1.5f, 1.5f);
-            ImPlot::SetNextMarkerStyle(ImPlotMarker_Square, 1);
-            // cmplx* is an array of a structure which has float real and imaginary numbers inside. 
-            // memory structure of cmplx is in this way: [RIRIRIRI...]
-            // So using stride of two element size and using same pointer twice with one of them with one size of a float offset, we can plot scatter.
-            // [RIRIRI], [IRIRI]
-            ImPlot::PlotScatter("Modulated Data", 
-            (float*)app->mod->rxData, 
-            ((float*)app->mod->rxData) + 1, 
-            symbolSize, 0, 0, sizeof(float) * 2);
-
-            if (constel)
-            {
-                ImPlot::SetNextMarkerStyle(ImPlotMarker_Plus, 3);
-                ImPlot::PlotScatter(modTypeStr[app->mod->modType], (float*)modulation_get_constellation_data(app->mod),
-                ((float*)modulation_get_constellation_data(app->mod)) + 1, modulation_get_symbol_element_size(app->mod), 0, 0, sizeof(float) * 2);
-            }
-            ImPlot::EndPlot();
-        }
-    }
-    ImGui::End();
-
-    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 370, main_viewport->WorkPos.y + 30), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(350, 250), ImGuiCond_FirstUseEver);
-    ImGui::Begin("Bit stream");
-    {
-        static bool subplots = false;
-        ImGui::Checkbox("Enable subplots",&subplots);
-        if (subplots)
+    if (gui->show_const_window){
+        ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 10, main_viewport->WorkPos.y + 270), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowSize(ImVec2(350, 350), ImGuiCond_FirstUseEver);
+        ImGui::Begin("Constellation Diagram", &gui->show_const_window);
         {
-            static float rratios[] = {0.85,1.15};
-            static float cratios[] = {1};
-            if (ImPlot::BeginSubplots("Bit stream", 2, 1, ImVec2(-1,-1), 
-            ImPlotFlags_NoTitle | ImPlotSubplotFlags_LinkCols | ImPlotSubplotFlags_LinkAllY, 
-            rratios, cratios)) {
-                if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
+            static bool constel = false;
+            ImGui::Checkbox("Show constellations", &constel);
+            if (ImPlot::BeginPlot("Constellations", ImVec2(-1, -1), ImPlotFlags_NoTitle | ImPlotFlags_NoLegend)) { 
+                ImPlot::SetupAxisLimits(ImAxis_X1, -1.5f, 1.5f);
+                ImPlot::SetupAxisLimits(ImAxis_Y1, -1.5f, 1.5f);
+                ImPlot::SetNextMarkerStyle(ImPlotMarker_Square, 1);
+                // cmplx* is an array of a structure which has float real and imaginary numbers inside. 
+                // memory structure of cmplx is in this way: [RIRIRIRI...]
+                // So using stride of two element size and using same pointer twice with one of them with one size of a float offset, we can plot scatter.
+                // [RIRIRI], [IRIRI]
+                ImPlot::PlotScatter("Modulated Data", 
+                (float*)app->mod->rxData, 
+                ((float*)app->mod->rxData) + 1, 
+                symbolSize, 0, 0, sizeof(float) * 2);
+
+                if (constel)
+                {
+                    ImPlot::SetNextMarkerStyle(ImPlotMarker_Plus, 3);
+                    ImPlot::PlotScatter(modTypeStr[app->mod->modType], (float*)modulation_get_constellation_data(app->mod),
+                    ((float*)modulation_get_constellation_data(app->mod)) + 1, modulation_get_symbol_element_size(app->mod), 0, 0, sizeof(float) * 2);
+                }
+                ImPlot::EndPlot();
+            }
+        }
+        ImGui::End();
+    }
+
+    if (gui->show_bitstream_window){
+        ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 370, main_viewport->WorkPos.y + 30), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowSize(ImVec2(350, 250), ImGuiCond_FirstUseEver);
+        ImGui::Begin("Bit stream", &gui->show_bitstream_window);
+        {
+            static bool subplots = false;
+            ImGui::Checkbox("Enable subplots",&subplots);
+            if (subplots)
+            {
+                static float rratios[] = {0.85,1.15};
+                static float cratios[] = {1};
+                if (ImPlot::BeginSubplots("Bit stream", 2, 1, ImVec2(-1,-1), 
+                ImPlotFlags_NoTitle | ImPlotSubplotFlags_LinkCols | ImPlotSubplotFlags_LinkAllY, 
+                rratios, cratios)) {
+                    if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
+                        ImPlot::SetupAxisLimits(ImAxis_Y1, -0.5f, 1.5f);
+                        ImPlot::SetupAxisLimits(ImAxis_X1, -1.0, dataSize + 1.0f);
+                        ImPlot::SetupAxes(NULL,"Input",ImPlotAxisFlags_NoLabel | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels,
+                        ImPlotAxisFlags_NoGridLines | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_Lock);
+                        ImPlot::PlotStairs("Input", app->mod->data, dataSize);
+                        ImPlot::EndPlot();
+                    }
+                    if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
+                        ImPlot::SetupAxes(NULL,"Output",0,ImPlotAxisFlags_NoGridLines | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_Lock);
+                        ImPlot::PlotStairs("Output", app->mod->demodData, dataSize);
+                        ImPlot::EndPlot();
+                    }
+                    ImPlot::EndSubplots();
+                }
+            }
+            else{
+                if (ImPlot::BeginPlot("Bit stream", ImVec2(-1,-1), ImPlotFlags_NoTitle)) {
                     ImPlot::SetupAxisLimits(ImAxis_Y1, -0.5f, 1.5f);
                     ImPlot::SetupAxisLimits(ImAxis_X1, -1.0, dataSize + 1.0f);
-                    ImPlot::SetupAxes(NULL,"Input",ImPlotAxisFlags_NoLabel | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels,
-                    ImPlotAxisFlags_NoGridLines | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_Lock);
+                    ImPlot::SetupAxis(ImAxis_Y1, NULL, ImPlotAxisFlags_Lock);
                     ImPlot::PlotStairs("Input", app->mod->data, dataSize);
-                    ImPlot::EndPlot();
-                }
-                if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
-                    ImPlot::SetupAxes(NULL,"Output",0,ImPlotAxisFlags_NoGridLines | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_Lock);
                     ImPlot::PlotStairs("Output", app->mod->demodData, dataSize);
                     ImPlot::EndPlot();
                 }
-                ImPlot::EndSubplots();
             }
         }
-        else{
-            if (ImPlot::BeginPlot("Bit stream", ImVec2(-1,-1), ImPlotFlags_NoTitle)) {
-                ImPlot::SetupAxisLimits(ImAxis_Y1, -0.5f, 1.5f);
-                ImPlot::SetupAxisLimits(ImAxis_X1, -1.0, dataSize + 1.0f);
-                ImPlot::SetupAxis(ImAxis_Y1, NULL, ImPlotAxisFlags_Lock);
-                ImPlot::PlotStairs("Input", app->mod->data, dataSize);
-                ImPlot::PlotStairs("Output", app->mod->demodData, dataSize);
-                ImPlot::EndPlot();
-            }
-        }
+        ImGui::End();
     }
-    ImGui::End();
 
-    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 370, main_viewport->WorkPos.y + 300), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(350, 250), ImGuiCond_FirstUseEver);
-    ImGui::Begin("Modulated Data");
-    {   
-        static bool subplots = false;
-        ImGui::Checkbox("Enable subplots",&subplots);
-        if (subplots)
-        {
-            static float rratios[] = {0.85,1.15};
-            static float cratios[] = {1};
-            if (ImPlot::BeginSubplots("Modulated Data", 2, 1, ImVec2(-1,-1), 
-            ImPlotFlags_NoTitle | ImPlotSubplotFlags_LinkCols | ImPlotSubplotFlags_LinkAllY, 
-            rratios, cratios)) {
-                if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
-                    ImPlot::SetupAxes(NULL,"Modulated",ImPlotAxisFlags_NoLabel | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels,
-                    ImPlotAxisFlags_Lock);
-                    ImPlot::PlotLine("Modulated", (float*)app->mod->modData, symbolSize, 1.0, 0.0, 0, sizeof(float)*2);
-                    ImPlot::EndPlot();
+    if (gui->show_moddata_window){
+        ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 370, main_viewport->WorkPos.y + 300), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowSize(ImVec2(350, 250), ImGuiCond_FirstUseEver);
+        ImGui::Begin("Modulated Data", &gui->show_moddata_window);
+        {   
+            static bool subplots = false;
+            ImGui::Checkbox("Enable subplots",&subplots);
+            if (subplots)
+            {
+                static float rratios[] = {0.85,1.15};
+                static float cratios[] = {1};
+                if (ImPlot::BeginSubplots("Modulated Data", 2, 1, ImVec2(-1,-1), 
+                ImPlotFlags_NoTitle | ImPlotSubplotFlags_LinkCols | ImPlotSubplotFlags_LinkAllY, 
+                rratios, cratios)) {
+                    if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
+                        ImPlot::SetupAxes(NULL,"Modulated",ImPlotAxisFlags_NoLabel | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels,
+                        ImPlotAxisFlags_Lock);
+                        ImPlot::PlotLine("Modulated", (float*)app->mod->modData, symbolSize, 1.0, 0.0, 0, sizeof(float)*2);
+                        ImPlot::EndPlot();
+                    }
+                    if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
+                        ImPlot::SetupAxisLimits(ImAxis_Y1, -1.5f, 1.5f);
+                        ImPlot::SetupAxes(NULL,"Demodulated",ImPlotAxisFlags_None,ImPlotAxisFlags_Lock);
+                        ImPlot::PlotLine("Demodulated", (float*)app->mod->rxData, symbolSize, 1.0, 0.0, 0, sizeof(float)*2);
+                        ImPlot::EndPlot();
+                    }
+                    ImPlot::EndSubplots();
                 }
-                if (ImPlot::BeginPlot("",ImVec2(),ImPlotFlags_NoLegend)) {
+            }
+            else
+            {
+                if (ImPlot::BeginPlot("Modulated Data", ImVec2(-1,-1), ImPlotFlags_NoTitle)) {
                     ImPlot::SetupAxisLimits(ImAxis_Y1, -1.5f, 1.5f);
-                    ImPlot::SetupAxes(NULL,"Demodulated",ImPlotAxisFlags_None,ImPlotAxisFlags_Lock);
+                    ImPlot::SetupAxis(ImAxis_Y1, NULL, ImPlotAxisFlags_Lock);
+                    ImPlot::PlotLine("Modulated", (float*)app->mod->modData, symbolSize, 1.0, 0.0, 0, sizeof(float)*2);
                     ImPlot::PlotLine("Demodulated", (float*)app->mod->rxData, symbolSize, 1.0, 0.0, 0, sizeof(float)*2);
                     ImPlot::EndPlot();
                 }
-                ImPlot::EndSubplots();
             }
         }
-        else
-        {
-            if (ImPlot::BeginPlot("Modulated Data", ImVec2(-1,-1), ImPlotFlags_NoTitle)) {
-                ImPlot::SetupAxisLimits(ImAxis_Y1, -1.5f, 1.5f);
-                ImPlot::SetupAxis(ImAxis_Y1, NULL, ImPlotAxisFlags_Lock);
-                ImPlot::PlotLine("Modulated", (float*)app->mod->modData, symbolSize, 1.0, 0.0, 0, sizeof(float)*2);
-                ImPlot::PlotLine("Demodulated", (float*)app->mod->rxData, symbolSize, 1.0, 0.0, 0, sizeof(float)*2);
-                ImPlot::EndPlot();
-            }
-        }
+        ImGui::End();
     }
-    ImGui::End();
 
     // About window
-    ImGui::SetNextWindowSize(ImVec2(600, 180), ImGuiCond_FirstUseEver);
     if (gui->show_about_window)
     {
         if (gui->dark_mode) ImGui::StyleColorsLight();
         else ImGui::StyleColorsDark();
+        ImGui::SetNextWindowSize(ImVec2(600, 180), ImGuiCond_FirstUseEver);
         ImGui::Begin("About", &gui->show_about_window);
         ImGui::Text("Modulation Demo \tsefaunal.com/p/modul8");
         ImGui::Text("Build time: " __DATE__ " " __TIME__);

@@ -37,6 +37,9 @@ Gui *gui_init()
     gui->dark_mode = true;
     gui->show_demo_window = false;
     gui->show_about_window = false;
+    gui->show_const_window = true;
+    gui->show_bitstream_window = true;
+    gui->show_moddata_window = true;
 
     return gui;
 }
