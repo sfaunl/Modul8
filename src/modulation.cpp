@@ -153,7 +153,6 @@ void mod_bitstream_to_u8(uint8_t *bitsIn, uint8_t *dataOut, int size)
         for (int j=0; j<8; j++)
         {
             buf |= (bitsIn[i*8+j] << j);
-            // buf <<= 1;
         }
         dataOut[i] = buf;
     }
