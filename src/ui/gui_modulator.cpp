@@ -7,7 +7,6 @@ const char* modInputStr[] = {"RANDOM", "TAUNT.WAV"};
 void gui_modulator_main_window(App *app)
 {
     Gui *gui = app->gui;
-    static bool darkMode = true;
     int symbolSize = modulation_get_symbol_size(app->mod);
     int dataSize = modulation_get_data_size(app->mod);
 
@@ -15,8 +14,8 @@ void gui_modulator_main_window(App *app)
     {
         if (ImGui::BeginMenu("File"))
         {
-            if (ImGui::MenuItem("Dark Mode", NULL, &darkMode)) {
-                if (darkMode) ImGui::StyleColorsDark();
+            if (ImGui::MenuItem("Dark Mode", NULL, &gui->dark_mode)) {
+                if (gui->dark_mode) ImGui::StyleColorsDark();
                 else ImGui::StyleColorsLight();
             }
             if(ImGui::MenuItem("Exit")){
@@ -174,7 +173,7 @@ void gui_modulator_main_window(App *app)
     ImGui::SetNextWindowSize(ImVec2(600, 180), ImGuiCond_FirstUseEver);
     if (gui->show_about_window)
     {
-        if (darkMode) ImGui::StyleColorsLight();
+        if (gui->dark_mode) ImGui::StyleColorsLight();
         else ImGui::StyleColorsDark();
         ImGui::Begin("About", &gui->show_about_window);
         ImGui::Text("Modulation Demo \tsefaunal.com/p/modul8");
@@ -187,7 +186,7 @@ void gui_modulator_main_window(App *app)
         if (ImGui::Button("Close"))
             gui->show_about_window = false;
         ImGui::End();
-        if (darkMode) ImGui::StyleColorsDark();
+        if (gui->dark_mode) ImGui::StyleColorsDark();
         else ImGui::StyleColorsLight();
     }
 }

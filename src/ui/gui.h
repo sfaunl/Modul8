@@ -5,6 +5,7 @@
 
 typedef struct{
     Imgui   *imgui;
+    bool    dark_mode;
     bool    show_demo_window;
     bool    show_about_window;
 } Gui;

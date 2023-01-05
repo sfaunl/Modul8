@@ -34,6 +34,7 @@ Gui *gui_init()
 #endif
     Gui *gui = new Gui();
     gui->imgui = imgui_renderer_init("Modulation Demo", window_width, window_height);
+    gui->dark_mode = true;
     gui->show_demo_window = false;
     gui->show_about_window = false;
 
