@@ -7,6 +7,7 @@ const char* modInputStr[] = {"RANDOM", "TAUNT.WAV"};
 void gui_modulator_main_window(App *app)
 {
     Gui *gui = app->gui;
+    static bool darkMode = true;
     int symbolSize = modulation_get_symbol_size(app->mod);
     int dataSize = modulation_get_data_size(app->mod);
 
@@ -14,6 +15,10 @@ void gui_modulator_main_window(App *app)
     {
         if (ImGui::BeginMenu("File"))
         {
+            if (ImGui::MenuItem("Dark Mode", NULL, &darkMode)) {
+                if (darkMode) ImGui::StyleColorsDark();
+                else ImGui::StyleColorsLight();
+            }
             if(ImGui::MenuItem("Exit")){
                 app->keepRunning = false;
             }
@@ -168,6 +173,8 @@ void gui_modulator_main_window(App *app)
     // About window
     if (gui->show_about_window)
     {
+        if (darkMode) ImGui::StyleColorsLight();
+        else ImGui::StyleColorsDark();
         ImGui::Begin("About", &gui->show_about_window);
         ImGui::Text("Modulation Demo");
         ImGui::Text("sefaunal.com/p/modulance");
@@ -176,5 +183,7 @@ void gui_modulator_main_window(App *app)
         if (ImGui::Button("Close"))
             gui->show_about_window = false;
         ImGui::End();
+        if (darkMode) ImGui::StyleColorsDark();
+        else ImGui::StyleColorsLight();
     }
 }
