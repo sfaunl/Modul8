@@ -38,8 +38,16 @@ Gui *gui_init()
     gui->show_demo_window = false;
     gui->show_about_window = false;
     gui->show_const_window = true;
-    gui->show_bitstream_window = true;
-    gui->show_moddata_window = true;
+    if (window_width < 600)
+    {
+        // Don't show bitstream and modulated data windows on mobile
+        gui->show_bitstream_window = false;
+        gui->show_moddata_window = false;
+    }
+    else{
+        gui->show_bitstream_window = true;
+        gui->show_moddata_window = true;
+    }
 
     return gui;
 }
