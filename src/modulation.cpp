@@ -177,13 +177,12 @@ void modulate_bits(void *arg, uint8_t *bitsIn, uint8_t *bitsOut, int size)
     mod->bitErrorRate = (mod->bitErrorRate * 0.8 + BER * 0.2);
 }
 
-void modulate_bytes(void *arg, uint8_t *dataIn, uint8_t *dataOut, int sizeBytes)
+void modulate_bytes(Mod *mod, uint8_t *dataIn, uint8_t *dataOut, int sizeBytes)
 {
-    Mod *mod = (Mod*)arg;
     int size = sizeBytes * 8;
 
     mod_u8_to_bitstream(dataIn, sizeBytes, mod->data);
-    modulate_bits(arg, mod->data, mod->demodData, size);
+    modulate_bits(mod, mod->data, mod->demodData, size);
     mod_bitstream_to_u8(mod->demodData, dataOut, sizeBytes);
 }
 
