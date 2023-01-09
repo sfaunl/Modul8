@@ -23,7 +23,7 @@ OBJS = $(addsuffix .o, $(basename $(notdir $(SOURCES))))
 LIBS += $(LINUX_GL_LIBS) -ldl `sdl2-config --libs`
 LIBS += -lm -lGL
 
-CXXFLAGS = -std=c++11 -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends
+CXXFLAGS = -std=c++11
 CXXFLAGS += `sdl2-config --cflags`
 CXXFLAGS += -Wall -Wextra -Wformat -Wformat -pedantic
 CXXFLAGS += -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends
