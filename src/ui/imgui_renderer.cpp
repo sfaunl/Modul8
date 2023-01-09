@@ -116,6 +116,7 @@ void imgui_renderer_free(Imgui *imgui)
     // Cleanup
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL2_Shutdown();
+    ImPlot::DestroyContext();
     ImGui::DestroyContext();
 
     SDL_GL_DeleteContext(imgui->glCtx);
