@@ -44,11 +44,11 @@ int modulation_run(void *userArg);
 
 Mod *modulation_init();
 
-int modulation_get_data_size(Mod *mod);
-int modulation_get_symbol_size(Mod *mod);
-cmplx *modulation_get_constellation_data(Mod *mod);
-int modulation_get_symbol_nbits(Mod *mod);
-int modulation_get_symbol_element_size(Mod *mod);
+int modulation_get_data_size(ModType mod, int numSymbols);
+int modulation_get_symbol_size(ModType mod);
+cmplx *modulation_get_constellation_data(ModType mod);
+int modulation_get_symbol_nbits(ModType mod);
+int modulation_get_symbol_element_size(ModType mod);
 void mod_u8_to_bitstream(uint8_t *dataIn, int size, uint8_t *bitsOut);
 void mod_bitstream_to_u8(uint8_t *bitsIn, uint8_t *dataOut, int size);
 

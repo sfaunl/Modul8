@@ -61,31 +61,26 @@ void modulation_calculate_qam(cmplx *constel, int nBits)
     }
 }
 
-int modulation_get_data_size(Mod *mod)
+
+int modulation_get_data_size(ModType mod, int numSymbols)
 {
-    int nBits = modList[mod->modType].bitSize;
-    int symbolSize = mod->numSymbols;
-    return symbolSize * nBits;
+    int nBits = modList[mod].bitSize;
+    return numSymbols * nBits;
 }
 
-int modulation_get_symbol_size(Mod *mod)
+int modulation_get_symbol_nbits(ModType mod)
 {
-    return mod->numSymbols;
+    return modList[mod].bitSize;
 }
 
-int modulation_get_symbol_nbits(Mod *mod)
+int modulation_get_symbol_element_size(ModType mod)
 {
-    return modList[mod->modType].bitSize;
+    return pow(2, modList[mod].bitSize);
 }
 
-int modulation_get_symbol_element_size(Mod *mod)
+cmplx *modulation_get_constellation_data(ModType mod)
 {
-    return pow(2, modList[mod->modType].bitSize);
-}
-
-cmplx *modulation_get_constellation_data(Mod *mod)
-{
-    return modList[mod->modType].constel;
+    return modList[mod].constel;
 }
 
 Mod *modulation_init()
@@ -161,8 +156,8 @@ void mod_bitstream_to_u8(uint8_t *bitsIn, uint8_t *dataOut, int size)
 void modulate_bits(void *arg, uint8_t *bitsIn, uint8_t *bitsOut, int size)
 {
     Mod *mod = (Mod*)arg;
-    int nBits = modulation_get_symbol_nbits(mod);
-    cmplx *constelList = modulation_get_constellation_data(mod);
+    int nBits = modulation_get_symbol_nbits(mod->modType);
+    cmplx *constelList = modulation_get_constellation_data(mod->modType);
     int symbolSize = size / nBits;
     mod->numSymbols = symbolSize;
 
@@ -228,7 +223,7 @@ int modulation_run(void *userArg)
             switch(app->mod->input)
             {
                 case MODINPUT_RANDOM:
-                    modulate_random(app, modulation_get_data_size(app->mod));
+                    modulate_random(app, modulation_get_data_size(app->mod->modType, app->mod->numSymbols));
                     break;
                 case MODINPUT_AUDIO:
                     modulate_audio(app, app->audio->wavBuffer, app->audio->wavBuffer2, app->audio->wavLength);

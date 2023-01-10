@@ -7,8 +7,8 @@ const char* modInputStr[] = {"RANDOM", "TAUNT.WAV"};
 void gui_modulator_main_window(App *app)
 {
     Gui *gui = app->gui;
-    int symbolSize = modulation_get_symbol_size(app->mod);
-    int dataSize = modulation_get_data_size(app->mod);
+    int symbolSize = app->mod->numSymbols;
+    int dataSize = modulation_get_data_size(app->mod->modType, symbolSize);
 
     if(ImGui::BeginMainMenuBar())
     {
@@ -92,8 +92,8 @@ void gui_modulator_main_window(App *app)
                 if (constel)
                 {
                     ImPlot::SetNextMarkerStyle(ImPlotMarker_Plus, 3);
-                    ImPlot::PlotScatter(modTypeStr[app->mod->modType], (float*)modulation_get_constellation_data(app->mod),
-                    ((float*)modulation_get_constellation_data(app->mod)) + 1, modulation_get_symbol_element_size(app->mod), 0, 0, sizeof(float) * 2);
+                    ImPlot::PlotScatter(modTypeStr[app->mod->modType], (float*)modulation_get_constellation_data(app->mod->modType),
+                    ((float*)modulation_get_constellation_data(app->mod->modType)) + 1, modulation_get_symbol_element_size(app->mod->modType), 0, 0, sizeof(float) * 2);
                 }
                 ImPlot::EndPlot();
             }
