@@ -10,6 +10,7 @@ typedef struct
     uint8_t *wavBuffer;
     uint8_t *wavBuffer2;
     Uint32 wavLength;
+    float volume;
 } Audio;
 
 Audio *audio_init();

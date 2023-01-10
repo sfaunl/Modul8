@@ -38,6 +38,12 @@ Audio *audio_init()
     audio->deviceId = deviceId;
     SDL_PauseAudioDevice(audio->deviceId, 0);
 
+    audio->volume = 0.33f;
+    for(int i=0; i<audio->wavLength; i++)
+    {
+        audio->wavBuffer[i] *= audio->volume;
+    }
+
     return audio;
 }
 
