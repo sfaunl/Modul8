@@ -56,6 +56,8 @@ struct _DragConnectionPayload
     const char* SlotTitle = nullptr;
     /// Source slot kind.
     int SlotKind = 0;
+    /// Source slot data pointer.
+    SlotData *slotData = nullptr;
 };
 
 /// Node-slot combination.
@@ -102,6 +104,7 @@ struct _CanvasStateImpl
     {
         int Kind = 0;
         const char* Title = nullptr;
+        SlotData* Data = nullptr;
     } slot{};
     /// Node id which will be positioned at the mouse cursor on next frame.
     void* AutoPositionNodeId = nullptr;
@@ -112,6 +115,8 @@ struct _CanvasStateImpl
         void* InputNode = nullptr;
         /// Slot title of input node.
         const char* InputSlot = nullptr;
+        /// Node data of input node.
+        SlotData* InputData = nullptr;
         /// Node id of output node.
         void* OutputNode = nullptr;
         /// Slot title of output node.
@@ -239,13 +244,13 @@ void BeginCanvas(CanvasState* canvas)
         if (io.KeyShift && !io.KeyCtrl)
             canvas->Offset.x += io.MouseWheel * 16.0f;
 
-        if (!io.KeyShift && !io.KeyCtrl)
+        if (!io.KeyShift && io.KeyCtrl)
         {
             canvas->Offset.y += io.MouseWheel * 16.0f;
             canvas->Offset.x += io.MouseWheelH * 16.0f;
         }
 
-        if (!io.KeyShift && io.KeyCtrl)
+        if (!io.KeyShift && !io.KeyCtrl)
         {
             if (io.MouseWheel != 0)
             {
@@ -627,11 +632,12 @@ bool IsNodeHovered()
     return gCanvas->_Impl->Node.ItemId == gCanvas->_Impl->HoveredNodeId;
 }
 
-bool GetNewConnection(void** input_node, const char** input_slot_title, void** output_node, const char** output_slot_title)
+bool GetNewConnection(void** input_node, const char** input_slot_title, SlotData** input_data, void** output_node, const char** output_slot_title)
 {
     IM_ASSERT(gCanvas != nullptr);
     IM_ASSERT(input_node != nullptr);
     IM_ASSERT(input_slot_title != nullptr);
+    IM_ASSERT(input_data != nullptr);
     IM_ASSERT(output_node != nullptr);
     IM_ASSERT(output_slot_title != nullptr);
 
@@ -642,6 +648,7 @@ bool GetNewConnection(void** input_node, const char** input_slot_title, void** o
     {
         *input_node = impl->NewConnection.InputNode;
         *input_slot_title = impl->NewConnection.InputSlot;
+        *input_data = impl->NewConnection.InputData;
         *output_node = impl->NewConnection.OutputNode;
         *output_slot_title = impl->NewConnection.OutputSlot;
         impl->NewConnection = {};
@@ -754,13 +761,14 @@ CanvasState* GetCurrentCanvas()
     return gCanvas;
 }
 
-bool BeginSlot(const char* title, int kind)
+bool BeginSlot(const char* title, int kind, SlotData *data /*=nullptr*/)
 {
     auto* canvas = gCanvas;
     auto* impl = canvas->_Impl;
 
     impl->slot.Title = title;
     impl->slot.Kind = kind;
+    impl->slot.Data = data;
 
     ImGui::BeginGroup();
     return true;
@@ -775,6 +783,7 @@ void EndSlot()
 
     ImGui::PushID(impl->slot.Title);
     ImGui::PushID(impl->slot.Kind);
+    ImGui::PushID(impl->slot.Data);
 
     ImRect slot_rect{ImGui::GetItemRectMin(), ImGui::GetItemRectMax()};
     // This here adds extra line between slots because after user renders slot cursor is already past those items.
@@ -811,12 +820,14 @@ void EndSlot()
             drag_data.NodeId = impl->Node.Id;
             drag_data.SlotKind = impl->slot.Kind;
             drag_data.SlotTitle = impl->slot.Title;
+            drag_data.slotData = impl->slot.Data;
 
             ImGui::SetDragDropPayload(drag_id, &drag_data, sizeof(drag_data));
 
             // Clear new connection info
             impl->NewConnection.InputNode = nullptr;
             impl->NewConnection.InputSlot = nullptr;
+            impl->NewConnection.InputData = nullptr;
             impl->NewConnection.OutputNode = nullptr;
             impl->NewConnection.OutputSlot = nullptr;
             canvas->_Impl->IgnoreConnections.clear();
@@ -840,6 +851,7 @@ void EndSlot()
             {
                 impl->NewConnection.InputNode = drag_data->NodeId;
                 impl->NewConnection.InputSlot = drag_data->SlotTitle;
+                impl->NewConnection.InputData = drag_data->slotData;
                 impl->NewConnection.OutputNode = impl->Node.Id;
                 impl->NewConnection.OutputSlot = impl->slot.Title;
             }
@@ -847,6 +859,7 @@ void EndSlot()
             {
                 impl->NewConnection.InputNode = impl->Node.Id;
                 impl->NewConnection.InputSlot = impl->slot.Title;
+                impl->NewConnection.InputData = drag_data->slotData;
                 impl->NewConnection.OutputNode = drag_data->NodeId;
                 impl->NewConnection.OutputSlot = drag_data->SlotTitle;
             }
@@ -857,6 +870,7 @@ void EndSlot()
         ImGui::EndDragDropTarget();
     }
 
+    ImGui::PopID(); // data
     ImGui::PopID(); // kind
     ImGui::PopID(); // name
 }

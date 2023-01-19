@@ -72,6 +72,7 @@ struct SlotInfo
     const char* title;
     /// Slot kind, will be used for matching connections to slots of same kind.
     int kind;
+    SlotData *datax = nullptr;
 };
 
 // Style which holds the extended variables and colors not already stored in ImNodes::CanvasState.

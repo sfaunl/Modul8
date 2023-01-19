@@ -41,6 +41,12 @@ enum StyleColor
     ColMax
 };
 
+struct SlotData
+{
+    void *data;
+    int  size;
+};
+
 struct _CanvasStateImpl;
 
 struct IMGUI_API CanvasState
@@ -55,13 +61,13 @@ struct IMGUI_API CanvasState
     struct CanvasStyle
     {
         /// Thickness of curves that connect slots together.
-        float CurveThickness = 5.0f;
+        float CurveThickness = 4.0f;
         /// Indent connection into slot widget a little. Useful when slot content covers connection end with some kind
         /// of icon (like a circle) and then no seam between icon and connection end is visible.
         float ConnectionIndent = 1.0f;
 
         float GridSpacing = 64.0f;
-        float CurveStrength = 100.0f;
+        float CurveStrength = 25.0f;
         float NodeRounding = 5.0f;
         ImVec2 NodeSpacing{4.0f, 4.0f};
     } Style;
@@ -86,7 +92,7 @@ IMGUI_API bool IsNodeHovered();
 IMGUI_API void AutoPositionNode(void* node_id);
 /// Returns `true` when new connection is made. Connection information is returned into `connection` parameter. Must be
 /// called at id scope created by BeginNode().
-IMGUI_API bool GetNewConnection(void** input_node, const char** input_slot_title, void** output_node, const char** output_slot_title);
+IMGUI_API bool GetNewConnection(void** input_node, const char** input_slot_title, SlotData** input_data, void** output_node, const char** output_slot_title);
 /// Get information of connection that is being made and has only one end connected. Returns true when pending connection exists, false otherwise.
 IMGUI_API bool GetPendingConnection(void** node_id, const char** slot_title, int* slot_kind);
 /// Render a connection. Returns `true` when connection is present, `false` if it is deleted.
@@ -102,7 +108,7 @@ inline bool IsInputSlotKind(int kind) { return kind < 0; }
 /// Returns `true` if `kind` is from output slot.
 inline bool IsOutputSlotKind(int kind) { return kind > 0; }
 /// Begins slot region. Kind is unique value indicating slot type. Negative values mean input slots, positive - output slots.
-IMGUI_API bool BeginSlot(const char* title, int kind);
+IMGUI_API bool BeginSlot(const char* title, int kind, SlotData *data=nullptr);
 /// Begins slot region. Kind is unique value whose sign is ignored.
 inline bool BeginInputSlot(const char* title, int kind) { return BeginSlot(title, InputSlotKind(kind)); }
 /// Begins slot region. Kind is unique value whose sign is ignored.

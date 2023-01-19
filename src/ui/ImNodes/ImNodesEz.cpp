@@ -232,7 +232,14 @@ void EndNode()
     g.NodeSplitter.Merge(draw_list);
 }
 
-bool Slot(const char* title, int kind, ImVec2 &pos)
+ImColor slotTypeColors[] =
+{
+    ImColor(100, 100, 100), // gray
+    ImColor(213, 0, 249), // penpe
+    ImColor(245, 124, 0), // turuncu
+    ImColor(33, 150, 243), // mavi
+};
+bool Slot(const char* title, int kind, SlotData *data, ImVec2 &pos)
 {
     IM_ASSERT(GContext != nullptr);
     Context &g = *GContext;
@@ -247,7 +254,7 @@ bool Slot(const char* title, int kind, ImVec2 &pos)
 
     pos.y += ImMax(title_size.y, 2*CIRCLE_RADIUS) + g.Style.ItemSpacing.y;
 
-    if (ImNodes::BeginSlot(title, kind))
+    if (ImNodes::BeginSlot(title, kind, data))
     {
         auto* draw_lists = ImGui::GetWindowDrawList();
 
@@ -270,8 +277,8 @@ bool Slot(const char* title, int kind, ImVec2 &pos)
             float offset = storage->GetFloat(ImGui::GetID("output-max-title-width"), title_size.x) - title_size.x;
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset);
 
-            ImGui::TextUnformatted(title);
-            ImGui::SameLine(0.0f, g.Style.ItemSpacing.x);
+            // ImGui::TextUnformatted(title);
+            // ImGui::SameLine(0.0f, g.Style.ItemSpacing.x);
         }
 
         ImRect circle_rect{
@@ -282,15 +289,17 @@ bool Slot(const char* title, int kind, ImVec2 &pos)
         float circle_offset_y = title_size.y / 2.f - CIRCLE_RADIUS;
         circle_rect.Min.y += circle_offset_y;
         circle_rect.Max.y += circle_offset_y;
-        draw_lists->AddCircleFilled(circle_rect.GetCenter(), CIRCLE_RADIUS, color);
+        draw_lists->AddCircleFilled(circle_rect.GetCenter(), CIRCLE_RADIUS, slotTypeColors[abs(kind)]);
 
         ImGui::ItemSize(circle_rect.GetSize());
         ImGui::ItemAdd(circle_rect, ImGui::GetID(title));
+        if (ImGui::IsItemHovered())
+            ImGui::SetTooltip("%s", title);
 
         if (ImNodes::IsInputSlotKind(kind))
         {
-            ImGui::SameLine(0.0f, g.Style.ItemSpacing.x);
-            ImGui::TextUnformatted(title);
+            // ImGui::SameLine(0.0f, g.Style.ItemSpacing.x);
+            // ImGui::TextUnformatted(title);
         }
 
         ImGui::PopStyleColor();
@@ -319,7 +328,7 @@ void InputSlots(const SlotInfo* slots, int snum)
     ImGui::BeginGroup();
     {
         for (int i = 0; i < snum; i++)
-            ImNodes::Ez::Slot(slots[i].title, ImNodes::InputSlotKind(slots[i].kind), pos);
+            ImNodes::Ez::Slot(slots[i].title, ImNodes::InputSlotKind(slots[i].kind), slots[i].datax, pos);
     }
     ImGui::EndGroup();
 
@@ -358,7 +367,7 @@ void OutputSlots(const SlotInfo* slots, int snum)
     ImGui::BeginGroup();
     {
         for (int i = 0; i < snum; i++)
-            ImNodes::Ez::Slot(slots[i].title, ImNodes::OutputSlotKind(slots[i].kind), pos);
+            ImNodes::Ez::Slot(slots[i].title, ImNodes::OutputSlotKind(slots[i].kind), slots[i].datax, pos);
     }
     ImGui::EndGroup();
 
@@ -443,17 +452,17 @@ static ImVec4& GetStyleColorRef(ImNodesStyleCol idx)
     switch (idx)
     {
     case ImNodesStyleCol_GridLines:             return g.State.Colors[ColCanvasLines].Value;
-    case ImNodesStyleCol_NodeBodyBg:            return g.Style.Colors.NodeBodyBg;
-    case ImNodesStyleCol_NodeBodyBgHovered:     return g.Style.Colors.NodeBodyBgHovered;
-    case ImNodesStyleCol_NodeBodyBgActive:      return g.Style.Colors.NodeBodyBgActive;
-    case ImNodesStyleCol_NodeBorder:            return g.Style.Colors.NodeBorder;
+    case ImNodesStyleCol_NodeBodyBg:            return ImGui::GetStyle().Colors[ImGuiCol_WindowBg];//g.Style.Colors.NodeBodyBg;
+    case ImNodesStyleCol_NodeBodyBgHovered:     return ImGui::GetStyle().Colors[ImGuiCol_MenuBarBg];//g.Style.Colors.NodeBodyBgHovered;
+    case ImNodesStyleCol_NodeBodyBgActive:      return ImGui::GetStyle().Colors[ImGuiCol_TabActive];//g.Style.Colors.NodeBodyBgActive;
+    case ImNodesStyleCol_NodeBorder:            return ImGui::GetStyle().Colors[ImGuiCol_Border];//g.Style.Colors.NodeBorder;
     case ImNodesStyleCol_Connection:            return g.State.Colors[ColConnection].Value;
     case ImNodesStyleCol_ConnectionActive:      return g.State.Colors[ColConnectionActive].Value;
     case ImNodesStyleCol_SelectBg:              return g.State.Colors[ColSelectBg].Value;
     case ImNodesStyleCol_SelectBorder:          return g.State.Colors[ColSelectBorder].Value;
-    case ImNodesStyleCol_NodeTitleBarBg:        return g.Style.Colors.NodeTitleBarBg;
-    case ImNodesStyleCol_NodeTitleBarBgHovered: return g.Style.Colors.NodeTitleBarBgHovered;
-    case ImNodesStyleCol_NodeTitleBarBgActive:  return g.Style.Colors.NodeTitleBarBgActive;
+    case ImNodesStyleCol_NodeTitleBarBg:        return ImGui::GetStyle().Colors[ImGuiCol_TitleBg];//g.Style.Colors.NodeTitleBarBg;
+    case ImNodesStyleCol_NodeTitleBarBgHovered: return ImGui::GetStyle().Colors[ImGuiCol_TitleBgCollapsed];//g.Style.Colors.NodeTitleBarBgHovered;
+    case ImNodesStyleCol_NodeTitleBarBgActive:  return ImGui::GetStyle().Colors[ImGuiCol_TitleBgActive];//g.Style.Colors.NodeTitleBarBgActive;
     default: IM_ASSERT(0);
     }
 }
