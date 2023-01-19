@@ -6,18 +6,20 @@ WASM_TEMPLATE_FILE = html_template/index.htm
 BUILD_DIR = build
 IMGUI_DIR = src/ui/imgui
 IMPLOT_DIR = src/ui/implot
-
+IMNODES_DIR = src/ui/ImNodes
 SRC = src/main.cpp \
 src/app.cpp \
 src/modulation.cpp \
 src/audio.cpp \
 src/ui/imgui_renderer.cpp \
 src/ui/gui.cpp \
-src/ui/gui_modulator.cpp 
+src/ui/gui_modulator.cpp \
+src/ui/gui_nodes.cpp 
 SRC += src/modulator/modulator.cpp
 SRC += $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_demo.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
 SRC += $(IMGUI_DIR)/backends/imgui_impl_sdl.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
 SRC += $(IMPLOT_DIR)/implot.cpp $(IMPLOT_DIR)/implot_items.cpp
+SRC += $(IMNODES_DIR)/ImNodes.cpp $(IMNODES_DIR)/ImNodesEz.cpp
 
 OBJS = $(addprefix $(BUILD_DIR)/obj/,$(notdir $(SRC:.cpp=.o)))
 vpath %.cpp $(sort $(dir $(SRC)))
@@ -26,11 +28,12 @@ LIBS += -ldl `sdl2-config --libs`
 LIBS += -lm -lGL
 
 CXXFLAGS 				+= $(CXXFLAGS_EXT)
-CXXFLAGS 				+= -std=c++11
-CXXFLAGS 				+= -Wall -Wextra -Wformat -Wformat -pedantic
+CXXFLAGS 				+= -std=c++14 # FIXME: ImNode requires C++14
+CXXFLAGS 				+= -Wall -Wextra -Wformat -pedantic
 CXXFLAGS 				+= `sdl2-config --cflags`
 CXXFLAGS 				+= -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends
 CXXFLAGS 				+= -I$(IMPLOT_DIR)
+CXXFLAGS 				+= -I$(IMNODES_DIR)
 CXXFLAGS 				+= -DImDrawIdx='unsigned int'
 
 LDFLAGS 				+= $(LDFLAGS_EXT)

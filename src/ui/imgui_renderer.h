@@ -14,6 +14,9 @@
 #define IMPLOT_DISABLE_OBSOLETE_FUNCTIONS
 #include "implot.h"
 
+#include "ImNodes.h"
+#include "ImNodesEz.h"
+
 struct Imgui
 {
     SDL_Renderer    *renderer;

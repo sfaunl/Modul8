@@ -12,6 +12,7 @@
 #include "../app.h"
 #include "gui.h"
 #include "gui_modulator.h"
+#include "gui_nodes.h"
 
 int window_width = 1200;
 int window_height = 720;
@@ -43,10 +44,12 @@ Gui *gui_init()
         // Don't show bitstream and modulated data windows on mobile
         gui->show_bitstream_window = false;
         gui->show_moddata_window = false;
+        gui->show_nodes_window = false;
     }
     else{
         gui->show_bitstream_window = true;
         gui->show_moddata_window = true;
+        gui->show_nodes_window = true;
     }
 
     return gui;
@@ -63,6 +66,7 @@ void render_gui(App *app)
         ImGui::ShowDemoWindow(&app->gui->show_demo_window);
 
     gui_modulator_main_window(app);
+    gui_nodes_window(app);
 }
 
 int gui_run(void *userArg)

@@ -11,6 +11,7 @@ typedef struct{
     bool    show_const_window;
     bool    show_bitstream_window;
     bool    show_moddata_window;
+    bool    show_nodes_window;
 } Gui;
 
 Gui *gui_init();
