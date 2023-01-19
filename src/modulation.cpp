@@ -87,15 +87,15 @@ Mod *modulation_init()
 {
     Mod *mod = new Mod();
 
-    mod->running    = true;
-    mod->numSymbols = 500;
+    mod->running    = false;
+    mod->numSymbols = 256;
     mod->data       = new uint8_t[MAX_SYMBOL_LENGTH * MAX_SYMBOL_ELEMENTS];
     mod->modData    = new cmplx[MAX_SYMBOL_LENGTH];
     mod->rxData     = new cmplx[MAX_SYMBOL_LENGTH];
     mod->demodData  = new uint8_t[MAX_SYMBOL_LENGTH * MAX_SYMBOL_ELEMENTS];
-    mod->modType    = MOD_256QAM;
+    mod->modType    = MOD_16QAM;
 
-    mod->noiseSNRdB         = 30.0f;
+    mod->noiseSNRdB         = 22.0f;
     mod->bitErrorRate       = 0.0f;
     mod->symbolErrorRate    = 0.0f;
 
