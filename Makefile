@@ -31,6 +31,7 @@ CXXFLAGS 				+= -Wall -Wextra -Wformat -Wformat -pedantic
 CXXFLAGS 				+= `sdl2-config --cflags`
 CXXFLAGS 				+= -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends
 CXXFLAGS 				+= -I$(IMPLOT_DIR)
+CXXFLAGS 				+= -DImDrawIdx='unsigned int'
 
 LDFLAGS 				+= $(LDFLAGS_EXT)
 LDFLAGS 				+= -Wl,--gc-sections

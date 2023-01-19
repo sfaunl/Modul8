@@ -1,10 +1,6 @@
 #ifndef _IMGUI_RENDERER_H
 #define _IMGUI_RENDERER_H
 
-#ifndef ImDrawIdx
-#define ImDrawIdx unsigned int
-#endif
-
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
